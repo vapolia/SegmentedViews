@@ -18,7 +18,7 @@ public static class MauiAppBuilderExtensions
     /// </summary>
     /// <param name="builder"></param>
     /// <returns></returns>
-    public static MauiAppBuilder UseSegmentedControl(this MauiAppBuilder builder)
+    public static MauiAppBuilder UseSegmentedView(this MauiAppBuilder builder)
     {
         builder.ConfigureMauiHandlers(handlers =>
         {

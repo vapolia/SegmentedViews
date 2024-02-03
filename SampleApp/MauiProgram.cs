@@ -14,7 +14,7 @@ namespace SampleApp
                        fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                        fonts.AddFont("OpenSans-SemiBold.ttf", "OpenSansSemiBold");
                    })
-                   .UseSegmentedControl();
+                   .UseSegmentedView();
 
 #if DEBUG
             builder.Logging.AddDebug();
