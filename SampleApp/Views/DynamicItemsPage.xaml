@@ -1,0 +1,50 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"
+             xmlns:viewModels="clr-namespace:SampleApp.ViewModels"
+             x:Class="SampleApp.Views.DynamicItemsPage"
+             x:DataType="viewModels:DynamicItemsPageViewModel"
+             Title="Advanced demo">
+    
+    <ContentPage.Resources>
+        <viewModels:PersonTextConverter x:Key="PersonTextConverter" />
+    </ContentPage.Resources>
+        
+    <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
+        
+        <segmented:SegmentedView
+            ItemsSource="{Binding Persons}"
+            TextPropertyName="LastName"
+            SelectedIndex="0"
+            x:Name="TheSegmentView"
+            HorizontalOptions="Fill" IsEnabled="True"
+            SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+            SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
+            SelectedItem="{Binding SegmentSelectedItem}" />
+
+        
+        <HorizontalStackLayout Spacing="5">
+            <Label Text="Selected Segment : #" VerticalOptions="Center" />
+            <Entry Text="{Binding SelectedIndex, Source={x:Reference TheSegmentView}}" />
+        </HorizontalStackLayout>
+        <Label Text="{Binding InfoText}" />
+        
+        <Button Text="Add item" Command="{Binding AddItemCommand}" />
+        <Button Text="Remove last item" Command="{Binding RemoveItemCommand}" />
+        <Button Text="Clear" Command="{Binding ClearCommand}" />
+
+        <segmented:SegmentedView
+            ItemsSource="{Binding Persons}"
+            TextConverter="{x:StaticResource PersonTextConverter}"
+            HorizontalOptions="Fill" IsEnabled="True"
+            SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+            SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
+            SelectedItem="{Binding SegmentSelectedItem, Mode=OneWay}"
+            SelectedIndex="{Binding SelectedIndex,Source={x:Reference TheSegmentView}}"
+            />
+
+        <Label Text="{Binding InfoText2}" />
+        
+    </VerticalStackLayout>
+    
+</ContentPage>
