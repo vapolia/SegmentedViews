@@ -21,7 +21,7 @@ builder.UseSegmentedView();
 
 See the SampleApp in this repo.
 
-![image](https://github.com/vapolia/SegmentedViews/assets/190756/e7e0f39b-ae55-4cc5-b12e-160390868975)
+![image](https://github.com/vapolia/SegmentedViews/assets/190756/0bd93272-739e-4bbe-85b6-dc407b1cab13)
 
 
 Declare the namespace:
