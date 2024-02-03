@@ -1,53 +1,58 @@
-# PicturePicker
+# SegmentedViews
 
 Platforms:
-- Android (5 to 10)  
-- iOS (11 to 14)  
+- Android
+- iOS
 
-Usage options:
-- static methods on the AdvancedMediaPicker static class
-- Interface IPicturePicker with a PicturePicker class on each platform
+Supports both static segments and `ItemsSource` to build segments dynamically.
 
-# Standard usage
+# Quick start
 
-```csharp
-OpenPictureLibraryCommand = new Command(async () =>
-{
-    bool ok = false;
-    var pictureCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-    var targetFile = Path.Combine(pictureCacheFolder, $"profilePic-{Guid.NewGuid()}.jpg");
+Add the above nuget package to your Maui project   
+then add this line to your maui app builder:
 
-    var hasPermission = await Permissions.CheckStatusAsync<Permissions.Photos>();
-    if(hasPermission != PermissionStatus.Granted && hasPermission != PermissionStatus.Restricted)
-        hasPermission = await Permissions.RequestAsync<Permissions.Photos>();
-    if (hasPermission != PermissionStatus.Granted && hasPermission != PermissionStatus.Restricted)
-    {
-        if(await page.DisplayAlert("Denied", "You denied access to your photo library.", "Open Settings", "OK"))
-            AppInfo.ShowSettingsUI();
-    }
-    else
-        ok = await AdvancedMediaPicker.ChoosePictureFromLibrary(targetFile, maxPixelWidth: 500, maxPixelHeight: 500);
-
-    if (ok)
-        ImagePath = targetFile;
-});
+```c#
+using Vapolia.SegmentedViews;
+...
+builder.UseSegmentedView();
 ```
 
-# Reference
+# Examples
 
-Use AdvancedMediaPicker.[MethodName] where MethodName is the same as the one on the interface.
+See the SampleApp in this repo.
 
-```csharp
-    public interface IPicturePicker
-    {
-        Task<bool> ChoosePictureFromLibrary(string filePath, Action<Task<bool>>? saving = null, int maxPixelWidth=0, int maxPixelHeight=0, int percentQuality=80);
+Declare the namespace:
+```xaml
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+         ...
+         xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews">
+```
 
-        /// <summary>
-        /// Returns false if cancelled
-        /// Note that saveToGallery can fails silently
-        /// </summary>
-        Task<bool> TakePicture(string filePath, Action<Task<bool>>? saving = null, int maxPixelWidth=0, int maxPixelHeight=0, int percentQuality=0, bool useFrontCamera=false, bool saveToGallery=false, CancellationToken cancel = default);
+Add a static segment view:
+```xaml
+<segmented:SegmentedView  
+    x:Name="TheSegmentView"
+    SelectedIndex="0"
+    SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+    SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
+    SelectedItem="{Binding SegmentSelectedItem}">
+    
+    <segmented:Segment Item="Item1" />
+    <segmented:Segment Item="Item2" />
+    <segmented:Segment Item="Item3" />
+    <segmented:Segment Item="Item4" />
+    <segmented:Segment Item="{Binding Item5Title}" />
+    
+</segmented:SegmentedView>
+```
 
-        bool HasCamera { get; }
-    }
+Or a dynamic segment view:
+```xaml
+        <segmented:SegmentedView
+            ItemsSource="{Binding Persons}"
+            TextPropertyName="LastName"
+            SelectedIndex="0"
+            SelectedItem="{Binding SegmentSelectedItem}"
+            SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+            SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}" />
 ```
