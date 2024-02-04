@@ -21,6 +21,9 @@ builder.UseSegmentedView();
 
 See the SampleApp in this repo.
 
+![image](https://github.com/vapolia/SegmentedViews/assets/190756/0bd93272-739e-4bbe-85b6-dc407b1cab13)
+
+
 Declare the namespace:
 ```xaml
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
