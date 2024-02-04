@@ -44,16 +44,18 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
         using var layoutInflater = LayoutInflater.From(Context)!;
         var rg = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null)!;
         
-        //rg.LayoutParameters = new (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
+        rg.LayoutParameters = new (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
 
         return rg;
     }
+
+    public override bool NeedsContainer => false;
 
     protected override void ConnectHandler(RadioGroup platformView)
     {
         base.ConnectHandler(platformView);
 
-        platformView.EnsureId();
+        //platformView.EnsureId();
         platformView.CheckedChange += PlatformView_CheckedChange;
     }
 
@@ -98,7 +100,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
             
             var rb = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null)!;
             if(control.DisplayMode == SegmentDisplayMode.EqualWidth)
-                rb.LayoutParameters = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, 1f);
+                rb.LayoutParameters = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, 1f);
             else
                 rb.LayoutParameters = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.MatchParent);
             
@@ -137,6 +139,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
         unselectedShape.SetStroke(3, color);
 
         rb.Enabled = virtualView.IsEnabled;
+        var fontManager = handler.Services.GetRequiredService<IFontManager>();
+        rb.Typeface = Font.OfSize(control.FontFamily, control.FontSize).ToTypeface(fontManager);
 
         var padding = handler.Context.ToPixels(control.ItemPadding);
         rb.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
@@ -157,7 +161,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
         handler.disableRgNotifications = true;
         try
         {
-
             if (handler.selectedButton != null && handler.selectedButton != option)
             {
                 if (handler.selectedButton.Checked)
@@ -231,7 +234,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
         for (var i = 0; i < handler.PlatformView.ChildCount; i++)
         {
             var v = (RadioButton)handler.PlatformView.GetChildAt(i)!;
-            v.SetTypeface(typeface, TypefaceStyle.Normal);
+            v.Typeface = typeface;
         }
     }
 

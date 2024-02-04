@@ -13,6 +13,10 @@
     <!-- Update the base FontSize to set it across all Controls styles -->
     <x:Double x:Key="AppFontSize">14</x:Double>
 
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource Light}}"/>
+    </Style>
+
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
     </Style>

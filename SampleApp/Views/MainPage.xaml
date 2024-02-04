@@ -5,7 +5,6 @@
     xmlns:viewModels="clr-namespace:SampleApp.ViewModels"
     xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"
     x:DataType="viewModels:MainPageViewModel"
-    BackgroundColor="Wheat"
     Title="Basic Demo"> 
 
     <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
@@ -13,7 +12,10 @@
         <segmented:SegmentedView  
             x:Name="TheSegmentView"
             HorizontalOptions="Fill" IsEnabled="True"
-            SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+            SelectedTextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
+            TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
+            TintColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}" 
+            DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedItem="{Binding SegmentSelectedItem}"
             ItemPadding="10,5">
