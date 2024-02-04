@@ -17,12 +17,14 @@ public class SegmentedView : View, ISegmentedView
   public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(SegmentedView), propertyChanged: (bindable, value, newValue) => ((SegmentedView)bindable).OnItemsSourceChanged((IEnumerable?)value, (IEnumerable?)newValue));
   public static readonly BindableProperty TextPropertyNameProperty = BindableProperty.Create(nameof(TextPropertyName), typeof(string), typeof(SegmentedView));
   public static readonly BindableProperty TextConverterProperty = BindableProperty.Create(nameof(TextConverter), typeof(IValueConverter), typeof(SegmentedView));
+  public static readonly BindableProperty DisplayModeProperty = BindableProperty.Create(nameof(DisplayMode), typeof(SegmentDisplayMode), typeof(SegmentedView), SegmentDisplayMode.EqualWidth);
   public static readonly BindableProperty TintColorProperty = BindableProperty.Create(nameof(TintColor), typeof(Color), typeof(SegmentedView), Colors.Blue);
   public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(SegmentedView), Colors.Black);
   public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(SegmentedView), Colors.White);
   public static readonly BindableProperty DisabledColorProperty = BindableProperty.Create(nameof(DisabledColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
   public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize), typeof(double), typeof(SegmentedView), 12.0);
   public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(SegmentedView));
+  public static readonly BindableProperty ItemPaddingProperty = BindableProperty.Create(nameof(ItemPadding), typeof(Thickness), typeof(SegmentedView), new Thickness(10,3));
   public static readonly BindableProperty SelectedIndexProperty = BindableProperty.Create(nameof(SelectedIndex), typeof(int), typeof(SegmentedView), NoSelection, BindingMode.TwoWay);
   public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(SegmentedView), null, BindingMode.TwoWay);
   public static readonly BindableProperty SelectionChangedCommandProperty = BindableProperty.Create(nameof(SelectionChangedCommand), typeof(ICommand), typeof(SegmentedView));
@@ -53,6 +55,8 @@ public class SegmentedView : View, ISegmentedView
 
   public string? TextPropertyName { get => (string?)GetValue(TextPropertyNameProperty); set => SetValue(TextPropertyNameProperty, value); }
   public IValueConverter? TextConverter { get => (IValueConverter?)GetValue(TextConverterProperty); set => SetValue(TextConverterProperty, value); }
+
+  public SegmentDisplayMode DisplayMode { get => (SegmentDisplayMode)GetValue(DisplayModeProperty); set => SetValue(DisplayModeProperty, value); } 
   
   /// <summary>
   /// Color of both the border of the container, and the background of selected segments
@@ -76,6 +80,7 @@ public class SegmentedView : View, ISegmentedView
   [TypeConverter(typeof(FontSizeConverter))]
   public double FontSize { get => (double)GetValue(FontSizeProperty); set => SetValue(FontSizeProperty, value); }
   public string? FontFamily { get => (string?)GetValue(FontFamilyProperty); set => SetValue(FontFamilyProperty, value); }
+  public Thickness ItemPadding { get => (Thickness)GetValue(ItemPaddingProperty); set => SetValue(ItemPaddingProperty, value); }
 
   /// <summary>
   /// Can be -1 for no selection (default)

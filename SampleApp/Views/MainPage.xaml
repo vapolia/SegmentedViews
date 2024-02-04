@@ -15,7 +15,8 @@
             HorizontalOptions="Fill" IsEnabled="True"
             SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
-            SelectedItem="{Binding SegmentSelectedItem}">
+            SelectedItem="{Binding SegmentSelectedItem}"
+            ItemPadding="10,5">
             
             <segmented:Segment Item="All views" />
             <segmented:Segment Item="Tab2" />

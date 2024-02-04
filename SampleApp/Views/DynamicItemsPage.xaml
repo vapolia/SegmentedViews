@@ -20,7 +20,8 @@
             HorizontalOptions="Fill" IsEnabled="True"
             SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
-            SelectedItem="{Binding SegmentSelectedItem}" />
+            SelectedItem="{Binding SegmentSelectedItem}"
+            ItemPadding="10,3" />
 
         
         <HorizontalStackLayout Spacing="5">

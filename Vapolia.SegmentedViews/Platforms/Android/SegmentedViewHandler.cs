@@ -1,5 +1,6 @@
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Text;
 using Android.Views;
 using Android.Widget;
 using Microsoft.Maui.Controls.Platform;
@@ -27,6 +28,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
         // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
         [nameof(ISegmentedView.FontSize)] = MapFontSizeFamily,
         [nameof(ISegmentedView.FontFamily)] = MapFontSizeFamily,
+        [nameof(ISegmentedView.ItemPadding)] = MapItemPadding,
     };
 
     public SegmentedViewHandler() : base(Mapper)
@@ -40,7 +42,11 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
     protected override RadioGroup CreatePlatformView()
     {
         using var layoutInflater = LayoutInflater.From(Context)!;
-        return (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null);
+        var rg = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null)!;
+        
+        //rg.LayoutParameters = new (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
+
+        return rg;
     }
 
     protected override void ConnectHandler(RadioGroup platformView)
@@ -89,9 +95,16 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
         for (var i = 0; i < virtualView.Children.Count; i++)
         {
             var o = virtualView.Children[i];
+            
             var rb = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null)!;
-
-            rb.LayoutParameters = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent, 1f);
+            if(control.DisplayMode == SegmentDisplayMode.EqualWidth)
+                rb.LayoutParameters = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, 1f);
+            else
+                rb.LayoutParameters = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.MatchParent);
+            
+            rb.SetSingleLine(true);
+            rb.Ellipsize = TextUtils.TruncateAt.End;
+            
             rb.Text = o.GetText(control);
             SetTextColor(rb, i == control.SelectedIndex, control);
 
@@ -100,21 +113,22 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
             else if (i == virtualView.Children.Count - 1)
                 rb.SetBackgroundResource(Resource.Drawable.segmented_control_last_background);
 
-            ConfigureRadioButton(virtualView, i, rb);
+            ConfigureRadioButton(handler, control, rb);
             rg.AddView(rb);
         }
 
         MapSelectedIndex(handler, control);
     }
 
-    static void ConfigureRadioButton(ISegmentedView virtualView, int i, RadioButton rb)
+    static void ConfigureRadioButton(SegmentedViewHandler handler, ISegmentedView control, RadioButton rb)
     {
-        var gradientDrawable = (StateListDrawable)rb.Background!;
-        var drawableContainerState = (DrawableContainer.DrawableContainerState)gradientDrawable.GetConstantState()!;
-        var children = drawableContainerState.GetChildren();
+        var virtualView = handler.VirtualView;
+        
+        var drawableContainerState = (DrawableContainer.DrawableContainerState)rb.Background!.GetConstantState()!;
+        var drawables = drawableContainerState.GetChildren();
 
-        var selectedShape = children[0] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)children[0]).Drawable;
-        var unselectedShape = children[1] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)children[1]).Drawable;
+        var selectedShape = drawables[0] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)drawables[0]).Drawable;
+        var unselectedShape = drawables[1] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)drawables[1]).Drawable;
 
         var color = virtualView.IsEnabled ? virtualView.TintColor.ToPlatform() : virtualView.DisabledColor.ToPlatform();
 
@@ -123,6 +137,9 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
         unselectedShape.SetStroke(3, color);
 
         rb.Enabled = virtualView.IsEnabled;
+
+        var padding = handler.Context.ToPixels(control.ItemPadding);
+        rb.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
     }
     
     static void MapTintColor(SegmentedViewHandler handler, ISegmentedView control) 
@@ -217,13 +234,24 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
             v.SetTypeface(typeface, TypefaceStyle.Normal);
         }
     }
+
+    static void MapItemPadding(SegmentedViewHandler handler, ISegmentedView control)
+    {
+        var padding = handler.Context.ToPixels(control.ItemPadding);
+
+        for (var i = 0; i < handler.PlatformView.ChildCount; i++)
+        {
+            var v = (RadioButton)handler.PlatformView.GetChildAt(i)!;
+            v.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
+        }
+    }
         
     static void ReconfigureRadioButtons(SegmentedViewHandler handler, ISegmentedView control)
     {
         for (var i = 0; i < control.Children.Count; i++)
         {
             var rb = (RadioButton)handler.PlatformView.GetChildAt(i)!;
-            ConfigureRadioButton(handler.VirtualView, i, rb);
+            ConfigureRadioButton(handler, control, rb);
         }
     }
 }
