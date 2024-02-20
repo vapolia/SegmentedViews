@@ -12,12 +12,13 @@
         
     <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
         
-        <segmented:SegmentedView
+        <segmented:SegmentedView 
             ItemsSource="{Binding Persons}"
             TextPropertyName="LastName"
             SelectedIndex="0"
             x:Name="TheSegmentView"
-            HorizontalOptions="Fill" IsEnabled="True"
+            HorizontalOptions="Fill" 
+            IsEnabled="True"
             SelectedTextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
             TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
             TintColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}" 
