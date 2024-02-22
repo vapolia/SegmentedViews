@@ -5,13 +5,15 @@
     xmlns:viewModels="clr-namespace:SampleApp.ViewModels"
     xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"
     x:DataType="viewModels:MainPageViewModel"
-    Title="Basic Demo"> 
+    Title="Basic Demo"
+    BackgroundColor="Wheat"
+    > 
 
     <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
         
         <segmented:SegmentedView  
-            x:Name="TheSegmentView"
-            HorizontalOptions="Fill" IsEnabled="True"
+            x:Name="TheSegmentView" BackgroundColor="Yellow"
+            HorizontalOptions="Fill" DisplayMode="EqualWidth" IsEnabled="True"
             SelectedTextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
             TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
             TintColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}" 
@@ -20,10 +22,8 @@
             SelectedItem="{Binding SegmentSelectedItem}"
             ItemPadding="10,5">
             
-            <segmented:Segment Item="All views" />
-            <segmented:Segment Item="Tab2" />
-            <segmented:Segment Item="Tab3" />
-            <segmented:Segment Item="Attachments" />
+            <segmented:Segment Item="Tab1" />
+            <segmented:Segment Item="Some text Tab2" />
             <segmented:Segment Item="{Binding Text,Source={x:Reference TheEntry}}" />
             
         </segmented:SegmentedView>

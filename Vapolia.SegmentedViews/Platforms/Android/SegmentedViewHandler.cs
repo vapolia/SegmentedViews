@@ -1,33 +1,38 @@
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Text;
+using Android.Content.Res;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Google.Android.Material.Button;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using Font = Microsoft.Maui.Font;
-using RadioButton = Android.Widget.RadioButton;
+using Orientation = Android.Widget.Orientation;
+using Rect = Microsoft.Maui.Graphics.Rect;
 
 namespace Vapolia.SegmentedViews.Platforms.Android;
 
-internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
+internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButtonToggleGroup>
 {
-    RadioButton? selectedButton;
-    bool disableRgNotifications;
+    MaterialButton? selectedButton;
+    bool disableButtonNotifications;
 
     public static IPropertyMapper<ISegmentedView, SegmentedViewHandler> Mapper = new PropertyMapper<ISegmentedView, SegmentedViewHandler>(ViewMapper)
     {
         [nameof(ISegmentedView.Children)] = MapChildren,
-        [nameof(ISegmentedView.IsEnabled)] = MapIsEnabled,
+        [nameof(ISegmentedView.IsEnabled)] = MapIsEnabled2,
         [nameof(ISegmentedView.SelectedIndex)] = MapSelectedIndex,
-        [nameof(ISegmentedView.TintColor)] = MapTintColor,
-        [nameof(ISegmentedView.SelectedTextColor)] = MapSelectedTextColor,
+        
+        [nameof(ISegmentedView.TintColor)] = ReconfigureRadioButtons,
+        
+        [nameof(ISegmentedView.SelectedTextColor)] = MapTextColor,
         [nameof(ISegmentedView.TextColor)] = MapTextColor,
+        [nameof(ISegmentedView.DisabledColor)] = ReconfigureRadioButtons,
+        
         // [nameof(ISegmentedControl.BorderColor)] = MapBorderColor,
         // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
-        [nameof(ISegmentedView.FontSize)] = MapFontSizeFamily,
-        [nameof(ISegmentedView.FontFamily)] = MapFontSizeFamily,
+        [nameof(ISegmentedView.FontSize)] = MapFontSize,
+        [nameof(ISegmentedView.FontFamily)] = MapFontFamily,
         [nameof(ISegmentedView.ItemPadding)] = MapItemPadding,
     };
 
@@ -39,45 +44,71 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
     {
     }
 
-    protected override RadioGroup CreatePlatformView()
+    protected override MaterialButtonToggleGroup CreatePlatformView()
     {
-        using var layoutInflater = LayoutInflater.From(Context)!;
-        var rg = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null)!;
+        //using var layoutInflater = LayoutInflater.From(Context)!;
+        //var rg = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null)!;
+
+        //Xamarin.AndroidX.Compose.Material3
+        //Material3.
         
+        var rg = new MaterialButtonToggleGroup(Context, null, Resource.Attribute.materialButtonToggleGroupStyle);
+        rg.Orientation = Orientation.Horizontal;
         rg.LayoutParameters = new (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+        rg.SingleSelection = true;
+        rg.SelectionRequired = false;
+        
+        //result in too large items
+        //rg.MeasureWithLargestChildEnabled = true;
+
+        //OK. It takes whole space
+        //rg.BackgroundTintList = ColorStateList.ValueOf(Color.Red);
+        
+        //Does nothing
+        //rg.SetForegroundGravity(GravityFlags.FillHorizontal | GravityFlags.CenterVertical);
+        //rg.SetGravity(GravityFlags.FillHorizontal | GravityFlags.CenterVertical);
 
         return rg;
     }
 
     public override bool NeedsContainer => false;
 
-    protected override void ConnectHandler(RadioGroup platformView)
+    protected override void ConnectHandler(MaterialButtonToggleGroup platformView)
     {
         base.ConnectHandler(platformView);
 
         //platformView.EnsureId();
-        platformView.CheckedChange += PlatformView_CheckedChange;
+        platformView.ButtonChecked += PlatformView_CheckedChange;
     }
 
-    protected override void DisconnectHandler(RadioGroup platformView)
+    protected override void DisconnectHandler(MaterialButtonToggleGroup platformView)
     {
-        platformView.CheckedChange -= PlatformView_CheckedChange;
+        platformView.ButtonChecked -= PlatformView_CheckedChange;
         selectedButton = null;
 
         base.DisconnectHandler(platformView);
     }
 
-    void PlatformView_CheckedChange(object? sender, RadioGroup.CheckedChangeEventArgs e)
+    /// <summary>
+    /// Invokes "IView.Frame" after calling PlatformView.Layout
+    /// </summary>
+    public override void PlatformArrange(Rect frame)
     {
-        if(disableRgNotifications)
+        base.PlatformArrange(frame);
+    }
+
+    void PlatformView_CheckedChange(object? sender, MaterialButtonToggleGroup.ButtonCheckedEventArgs e)
+    {
+        if(disableButtonNotifications)
             return;
         
-        var rg = (RadioGroup)sender!;
-        if (rg.CheckedRadioButtonId != -1)
+        var rg = (MaterialButtonToggleGroup)sender!;
+
+        if (rg.CheckedButtonId != -1)
         {
-            var id = rg.CheckedRadioButtonId;
-            var radioButton = rg.FindViewById(id);
-            var i = rg.IndexOfChild(radioButton);
+            var id = rg.CheckedButtonId;
+            var button = rg.FindViewById(id);
+            var i = rg.IndexOfChild(button);
 
             //Should trigger MapSelectedSegment and switch the selected rg
             if (VirtualView.SelectedIndex != i)
@@ -92,121 +123,140 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
         rg.RemoveAllViews();
         handler.selectedButton = null;
 
-        using var layoutInflater = LayoutInflater.From(handler.Context)!;       
+        //using var layoutInflater = LayoutInflater.From(handler.Context)!;       
         
         for (var i = 0; i < virtualView.Children.Count; i++)
         {
             var o = virtualView.Children[i];
             
-            var rb = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null)!;
-            if(control.DisplayMode == SegmentDisplayMode.EqualWidth)
-                rb.LayoutParameters = new RadioGroup.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, 1f);
-            else
-                rb.LayoutParameters = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.MatchParent);
+            //var rb = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null)!;
+            var rb = new MaterialButton(handler.Context, null, Resource.Attribute.materialButtonOutlinedStyle);
+            //rb.SetButtonDrawable(null);
+            //rb.SetForegroundGravity(GravityFlags.Center);
             
-            rb.SetSingleLine(true);
-            rb.Ellipsize = TextUtils.TruncateAt.End;
+            //rb.SetSingleLine(true);
+            //rb.Ellipsize = TextUtils.TruncateAt.End;
             
             rb.Text = o.GetText(control);
             SetTextColor(rb, i == control.SelectedIndex, control);
 
-            if (i == 0)
-                rb.SetBackgroundResource(Resource.Drawable.segmented_control_first_background);
-            else if (i == virtualView.Children.Count - 1)
-                rb.SetBackgroundResource(Resource.Drawable.segmented_control_last_background);
+            // rb.SetBackgroundResource(
+            //     i == 0 ? Resource.Drawable.segmented_control_first_background :
+            //     i == virtualView.Children.Count - 1 ? Resource.Drawable.segmented_control_last_background :
+            //     Resource.Drawable.segmented_control_background);
+
+            if(control.DisplayMode == SegmentDisplayMode.EqualWidth)
+                rb.LayoutParameters = new MaterialButtonToggleGroup.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, 1f);
+            else
+                rb.LayoutParameters = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.MatchParent);
 
             ConfigureRadioButton(handler, control, rb);
             rg.AddView(rb);
         }
 
         MapSelectedIndex(handler, control);
+        
+        //rg.ForceLayout();
+        //rg.RequestLayout();
+        //handler.VirtualView.InvalidateMeasure();
     }
 
-    static void ConfigureRadioButton(SegmentedViewHandler handler, ISegmentedView control, RadioButton rb)
+    static void ConfigureRadioButton(SegmentedViewHandler handler, ISegmentedView control, MaterialButton rb)
     {
         var virtualView = handler.VirtualView;
-        
-        var drawableContainerState = (DrawableContainer.DrawableContainerState)rb.Background!.GetConstantState()!;
-        var drawables = drawableContainerState.GetChildren();
 
-        var selectedShape = drawables[0] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)drawables[0]).Drawable;
-        var unselectedShape = drawables[1] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)drawables[1]).Drawable;
+#region change colors
+        // var drawableContainerState = (DrawableContainer.DrawableContainerState)rb.Background!.GetConstantState()!;
+        // var drawables = drawableContainerState.GetChildren();
+        //
+        // var selectedShape = drawables[0] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)drawables[0]).Drawable;
+        // var unselectedShape = drawables[1] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)drawables[1]).Drawable;
+        //
+        // var color = virtualView.IsEnabled ? virtualView.TintColor.ToPlatform() : virtualView.DisabledColor.ToPlatform();
+        //
+        // selectedShape.SetStroke(3, color);
+        // selectedShape.SetColor(color);
+        // unselectedShape.SetStroke(3, color);
 
-        var color = virtualView.IsEnabled ? virtualView.TintColor.ToPlatform() : virtualView.DisabledColor.ToPlatform();
-
-        selectedShape.SetStroke(3, color);
-        selectedShape.SetColor(color);
-        unselectedShape.SetStroke(3, color);
+        rb.BackgroundTintList = new (
+        [
+            [global::Android.Resource.Attribute.StateEnabled],  //enabled
+            [-global::Android.Resource.Attribute.StateEnabled], //disabled
+            //[-global::Android.Resource.Attribute.Checked],    // unchecked
+            //[global::Android.Resource.Attribute.Checked],     // checked            
+        ], 
+        [
+            virtualView.TintColor.ToPlatform(),
+            virtualView.DisabledColor.ToPlatform(),
+        ]);
+#endregion
 
         rb.Enabled = virtualView.IsEnabled;
+        
         var fontManager = handler.Services.GetRequiredService<IFontManager>();
-        rb.Typeface = Font.OfSize(control.FontFamily, control.FontSize).ToTypeface(fontManager);
-
+        rb.Typeface = control.FontFamily == null ? fontManager.DefaultTypeface : Font.OfSize(control.FontFamily, 0).ToTypeface(fontManager);
+        var fontSize = (float)control.FontSize;
+        if(fontSize > 0)
+            rb.SetTextSize(ComplexUnitType.Sp, fontSize);
+        
         var padding = handler.Context.ToPixels(control.ItemPadding);
         rb.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
     }
     
-    static void MapTintColor(SegmentedViewHandler handler, ISegmentedView control) 
-        => ReconfigureRadioButtons(handler, control);
-
-    static void MapIsEnabled(SegmentedViewHandler handler, ISegmentedView control) 
-        => ReconfigureRadioButtons(handler, control);
-
     static void MapSelectedIndex(SegmentedViewHandler handler, ISegmentedView control)
     {
         var virtualView = handler.VirtualView;
 
-        var option = (RadioButton?)handler.PlatformView.GetChildAt(control.SelectedIndex);
+        var button = (MaterialButton?)handler.PlatformView.GetChildAt(control.SelectedIndex);
         
-        handler.disableRgNotifications = true;
+        handler.disableButtonNotifications = true;
         try
         {
-            if (handler.selectedButton != null && handler.selectedButton != option)
+            if (handler.selectedButton != null && handler.selectedButton != button)
             {
                 if (handler.selectedButton.Checked)
                     handler.selectedButton.Checked = false;
                 SetTextColor(handler.selectedButton, false, virtualView);
             }
 
-            if (option?.Checked == false)
-                option.Checked = true;
+            if (button?.Checked == false)
+                button.Checked = true;
         }
         finally
         {
-            handler.disableRgNotifications = false;
+            handler.disableButtonNotifications = false;
         }
 
-        if (option != null)
-            SetTextColor(option, true, virtualView);
+        if (button != null)
+            SetTextColor(button, true, virtualView);
         
-        handler.selectedButton = option;
+        handler.selectedButton = button;
     }
 
-    static void SetTextColor(RadioButton rb, bool isSelected, ISegmentedView virtualView)
+    static void SetTextColor(MaterialButton rb, bool isSelected, ISegmentedView virtualView)
     {
-        var textColor =
-            isSelected ? virtualView.SelectedTextColor.ToPlatform() 
-            : virtualView.IsEnabled ? virtualView.TextColor.ToPlatform() 
-            : virtualView.DisabledColor.ToPlatform();
-
-        rb.SetTextColor(textColor);
+        rb.ForegroundTintList = new (
+            [
+                [global::Android.Resource.Attribute.StateSelected], // selected            
+                [global::Android.Resource.Attribute.StateEnabled],  //enabled
+                [-global::Android.Resource.Attribute.StateEnabled], //disabled
+            ], 
+            [
+                virtualView.SelectedTextColor.ToPlatform(),
+                virtualView.TextColor.ToPlatform(),
+                virtualView.DisabledColor.ToPlatform(),
+            ]);
+        
+        // var textColor =
+        //     isSelected ? virtualView.SelectedTextColor.ToPlatform() 
+        //     : virtualView.IsEnabled ? virtualView.TextColor.ToPlatform() 
+        //     : virtualView.DisabledColor.ToPlatform();
+        //
+        // rb.ForegroundTintList = ColorStateList.ValueOf(textColor);
     }
 
-    static void MapSelectedTextColor(SegmentedViewHandler handler, ISegmentedView control)
-    {
-        var rb = (RadioButton?)handler.PlatformView.GetChildAt(control.SelectedIndex);
-        if(rb != null)
-            SetTextColor(rb, true, control);
-    }
-
-    static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control)
-    {
-        for (var i = 0; i < handler.PlatformView.ChildCount; i++)
-        {
-            var rb = (RadioButton)handler.PlatformView.GetChildAt(i)!;
-            SetTextColor(rb, i == control.SelectedIndex, control);
-        }
-    }
+    static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control) 
+        => DoForAllChildren(handler, (v,i) => SetTextColor(v, i == control.SelectedIndex, control));
 
     // static void MapBorderColor(SegmentedControlHandler handler, ISegmentedControl control)
     // {
@@ -217,44 +267,55 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, RadioGroup>
     // {
     // }
 
-    // static void MapFontSize(SegmentedControlHandler handler, ISegmentedControl control)
-    // {
-    //     for (var i = 0; i < handler.PlatformView.ChildCount; i++)
-    //     {
-    //         var v = (RadioButton)handler.PlatformView.GetChildAt(i);
-    //         v.SetTextSize(ComplexUnitType.Dip, control.FontSize.ToEm());
-    //     }
-    // }
+    static void MapFontSize(SegmentedViewHandler handler, ISegmentedView control)
+    {
+        var fontSize = (float)control.FontSize;
+        if (fontSize > 0)
+            DoForAllChildren(handler, v => v.SetTextSize(ComplexUnitType.Sp, fontSize));
+    }
 
-    static void MapFontSizeFamily(SegmentedViewHandler handler, ISegmentedView control)
+    static void MapFontFamily(SegmentedViewHandler handler, ISegmentedView control)
     {
         var fontManager = handler.Services.GetRequiredService<IFontManager>();
-        var typeface = Font.OfSize(control.FontFamily, control.FontSize).ToTypeface(fontManager);
+        var typeface = control.FontFamily == null ? fontManager.DefaultTypeface : Font.OfSize(control.FontFamily, 0).ToTypeface(fontManager);
 
-        for (var i = 0; i < handler.PlatformView.ChildCount; i++)
-        {
-            var v = (RadioButton)handler.PlatformView.GetChildAt(i)!;
-            v.Typeface = typeface;
-        }
+        DoForAllChildren(handler, v => v.Typeface = typeface);
     }
 
     static void MapItemPadding(SegmentedViewHandler handler, ISegmentedView control)
     {
         var padding = handler.Context.ToPixels(control.ItemPadding);
 
+        DoForAllChildren(handler, v =>
+        {
+            v.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
+        });
+    }
+
+    static void MapIsEnabled2(SegmentedViewHandler handler, ISegmentedView control)
+    {
+        MapIsEnabled(handler, control);
+        DoForAllChildren(handler, v => ConfigureRadioButton(handler, control, v));
+    }
+
+    static void ReconfigureRadioButtons(SegmentedViewHandler handler, ISegmentedView control) 
+        => DoForAllChildren(handler, v => ConfigureRadioButton(handler, control, v));
+
+    static void DoForAllChildren(SegmentedViewHandler handler, Action<MaterialButton> action)
+    {
         for (var i = 0; i < handler.PlatformView.ChildCount; i++)
         {
-            var v = (RadioButton)handler.PlatformView.GetChildAt(i)!;
-            v.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
+            var v = (MaterialButton)handler.PlatformView.GetChildAt(i)!;
+            action(v);
         }
     }
-        
-    static void ReconfigureRadioButtons(SegmentedViewHandler handler, ISegmentedView control)
+
+    static void DoForAllChildren(SegmentedViewHandler handler, Action<MaterialButton, int> action)
     {
-        for (var i = 0; i < control.Children.Count; i++)
+        for (var i = 0; i < handler.PlatformView.ChildCount; i++)
         {
-            var rb = (RadioButton)handler.PlatformView.GetChildAt(i)!;
-            ConfigureRadioButton(handler, control, rb);
+            var v = (MaterialButton)handler.PlatformView.GetChildAt(i)!;
+            action(v, i);
         }
     }
 }

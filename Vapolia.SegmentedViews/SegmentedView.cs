@@ -22,7 +22,11 @@ public class SegmentedView : View, ISegmentedView
   public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(SegmentedView), Colors.Black);
   public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(SegmentedView), Colors.White);
   public static readonly BindableProperty DisabledColorProperty = BindableProperty.Create(nameof(DisabledColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
-  public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize), typeof(double), typeof(SegmentedView), 12.0);
+  public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize), typeof(double), typeof(SegmentedView), 0d, defaultValueCreator: DefaultValueCreator);
+
+  private static object DefaultValueCreator(BindableObject bindable) 
+    => ((View)bindable).Handler?.MauiContext?.Services.GetService<IFontManager>()?.DefaultFontSize ?? 0d;
+
   public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(SegmentedView));
   public static readonly BindableProperty ItemPaddingProperty = BindableProperty.Create(nameof(ItemPadding), typeof(Thickness), typeof(SegmentedView), new Thickness(10,3));
   public static readonly BindableProperty SelectedIndexProperty = BindableProperty.Create(nameof(SelectedIndex), typeof(int), typeof(SegmentedView), NoSelection, BindingMode.TwoWay);
