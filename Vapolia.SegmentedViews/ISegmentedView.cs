@@ -14,18 +14,16 @@ public enum SegmentDisplayMode
     Content
 }
 
-public interface ISegmentedView : IView
+public interface ISegmentedView : IView, ITextStyle
 {
     SegmentDisplayMode DisplayMode { get; set; }
 
-    public Color TextColor { get; }
+    //public Color TextColor { get; }
     public Color TintColor { get; }
     public Color SelectedTextColor { get; }
     public Color DisabledColor { get; }
     // public Color BorderColor { get; }
     // public double BorderWidth { get; }
-    public double FontSize { get; }
-    public string? FontFamily { get; }
     public Thickness ItemPadding { get; set; }
 
     public int SelectedIndex { get; }

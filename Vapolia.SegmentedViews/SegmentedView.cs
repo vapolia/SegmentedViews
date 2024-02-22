@@ -3,11 +3,12 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Input;
+using Microsoft.Maui.Controls.Internals;
 
 namespace Vapolia.SegmentedViews;
 
 [ContentProperty(nameof(Children))]
-public class SegmentedView : View, ISegmentedView
+public class SegmentedView : View, ISegmentedView, IFontElement
 {
   public const int NoSelection = -1;
   
@@ -22,12 +23,16 @@ public class SegmentedView : View, ISegmentedView
   public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(SegmentedView), Colors.Black);
   public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(SegmentedView), Colors.White);
   public static readonly BindableProperty DisabledColorProperty = BindableProperty.Create(nameof(DisabledColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
-  public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize), typeof(double), typeof(SegmentedView), 0d, defaultValueCreator: DefaultValueCreator);
 
-  private static object DefaultValueCreator(BindableObject bindable) 
-    => ((View)bindable).Handler?.MauiContext?.Services.GetService<IFontManager>()?.DefaultFontSize ?? 0d;
-
-  public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(SegmentedView));
+#region Font
+  public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(IFontElement), default(string), propertyChanged: OnFontFamilyChanged);
+  public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize), typeof(double), typeof(IFontElement), 0d, propertyChanged: OnFontSizeChanged, defaultValueCreator: FontSizeDefaultValueCreator);
+  public static readonly BindableProperty FontAttributesProperty = BindableProperty.Create(nameof(FontAttributes), typeof(FontAttributes), typeof(IFontElement), FontAttributes.None, propertyChanged: OnFontAttributesChanged);
+  public static readonly BindableProperty FontAutoScalingEnabledProperty = BindableProperty.Create(nameof(FontAutoScalingEnabled), typeof(bool), typeof(IFontElement), true, propertyChanged: OnFontAutoScalingEnabledChanged);
+  public static readonly BindableProperty CharacterSpacingProperty = BindableProperty.Create(nameof(CharacterSpacing), typeof(double), typeof(SegmentedView), 0.0d, propertyChanged: OnCharacterSpacingPropertyChanged);
+#endregion
+ 
+  //public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(SegmentedView));
   public static readonly BindableProperty ItemPaddingProperty = BindableProperty.Create(nameof(ItemPadding), typeof(Thickness), typeof(SegmentedView), new Thickness(10,3));
   public static readonly BindableProperty SelectedIndexProperty = BindableProperty.Create(nameof(SelectedIndex), typeof(int), typeof(SegmentedView), NoSelection, BindingMode.TwoWay);
   public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(SegmentedView), null, BindingMode.TwoWay);
@@ -44,12 +49,11 @@ public class SegmentedView : View, ISegmentedView
   // public static readonly BindableProperty BorderWidthProperty = BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(SegmentedControl), defaultValueCreator: _ => DeviceInfo.Platform == DevicePlatform.Android ? 1.0 : 0.0);
   #endregion
 
-  #region Bindables Properties
-
   //if (DesignMode.IsDesignModeEnabled)
   [EditorBrowsable(EditorBrowsableState.Never)]
   public ObservableCollection<Segment> Children { get; } = new ();
-
+  
+  #region Bindables Properties
   /// <summary>
   /// Optional. If set, replaces the Children property. Each item in this collection is converted into Children. The collection is observed and the view updates dynamically.
   /// The item is converted into a string using the optional TextPropertyName (ie: what property to used for display on each object, or null for the object itself),
@@ -81,9 +85,42 @@ public class SegmentedView : View, ISegmentedView
   // public Color BorderColor { get => (Color)GetValue(BorderColorProperty); set => SetValue(BorderColorProperty, value); }
   // public double BorderWidth { get => (double)GetValue(BorderWidthProperty); set => SetValue(BorderWidthProperty, value); }
 
+  #region Font
+  Microsoft.Maui.Font ITextStyle.Font => this.ToFont();
+  
+  static void OnFontFamilyChanged(BindableObject bindable, object oldValue, object newValue)
+    => ((IFontElement)bindable).OnFontFamilyChanged((string)oldValue, (string)newValue);
+  static void OnFontSizeChanged(BindableObject bindable, object oldValue, object newValue)
+    => ((IFontElement)bindable).OnFontSizeChanged((double)oldValue, (double)newValue);
+  static void OnFontAutoScalingEnabledChanged(BindableObject bindable, object oldValue, object newValue)
+    => ((IFontElement)bindable).OnFontAutoScalingEnabledChanged((bool)oldValue, (bool)newValue);
+  static object FontSizeDefaultValueCreator(BindableObject bindable)
+    => ((IFontElement)bindable).FontSizeDefaultValueCreator();
+  static void OnFontAttributesChanged(BindableObject bindable, object oldValue, object newValue)
+    => ((IFontElement)bindable).OnFontAttributesChanged((FontAttributes)oldValue, (FontAttributes)newValue);
+  static void OnCharacterSpacingPropertyChanged(BindableObject bindable, object oldValue, object newValue) 
+    => ((SegmentedView)bindable).OnCharacterSpacingPropertyChanged((double)oldValue, (double)newValue);
+
+  void IFontElement.OnFontFamilyChanged(string oldValue, string newValue) => HandleFontChanged();
+  void IFontElement.OnFontSizeChanged(double oldValue, double newValue) => HandleFontChanged();
+  double IFontElement.FontSizeDefaultValueCreator() => Handler?.MauiContext?.Services.GetService<IFontManager>()?.DefaultFontSize ?? 0d;
+  void IFontElement.OnFontAttributesChanged(FontAttributes oldValue, FontAttributes newValue) => HandleFontChanged();
+  void IFontElement.OnFontAutoScalingEnabledChanged(bool oldValue, bool newValue) => HandleFontChanged();
+  void HandleFontChanged()
+  {
+    Handler?.UpdateValue(nameof(ITextStyle.Font));
+    InvalidateMeasureNonVirtual(InvalidationTrigger.MeasureChanged);
+  }
+  void OnCharacterSpacingPropertyChanged(double oldValue, double newValue) => InvalidateMeasure();
+  
+  public FontAttributes FontAttributes { get => (FontAttributes)GetValue(FontAttributesProperty); set => SetValue(FontAttributesProperty, value); }
+  public string? FontFamily { get => (string?)GetValue(FontFamilyProperty); set => SetValue(FontFamilyProperty, value); }
   [TypeConverter(typeof(FontSizeConverter))]
   public double FontSize { get => (double)GetValue(FontSizeProperty); set => SetValue(FontSizeProperty, value); }
-  public string? FontFamily { get => (string?)GetValue(FontFamilyProperty); set => SetValue(FontFamilyProperty, value); }
+  public bool FontAutoScalingEnabled { get => (bool)GetValue(FontAutoScalingEnabledProperty); set => SetValue(FontAutoScalingEnabledProperty, value); }
+  public double CharacterSpacing { get => (double)GetValue(CharacterSpacingProperty); set => SetValue(CharacterSpacingProperty, value); }
+  #endregion
+
   public Thickness ItemPadding { get => (Thickness)GetValue(ItemPaddingProperty); set => SetValue(ItemPaddingProperty, value); }
 
   /// <summary>
