@@ -1,9 +1,12 @@
 # Vapolia.SegmentedViews
 
 [![NuGet][nuget-img]][nuget-link]  
-![Nuget](https://img.shields.io/nuget/dt/Vapolia.SegmentedViews)
-
+![Nuget](https://img.shields.io/nuget/dt/Vapolia.SegmentedViews)  
 [![Publish To Nuget](https://github.com/vapolia/SegmentedViews/actions/workflows/main.yaml/badge.svg)](https://github.com/vapolia/SegmentedViews/actions/workflows/main.yaml)
+
+```
+dotnet add package Vapolia.SegmentedViews
+```
 
 [nuget-link]: https://www.nuget.org/packages/Vapolia.SegmentedViews/
 [nuget-img]: https://img.shields.io/nuget/v/Vapolia.SegmentedViews
