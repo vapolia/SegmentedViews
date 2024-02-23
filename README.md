@@ -1,4 +1,4 @@
-# SegmentedViews
+# Vapolia.SegmentedViews
 
 [![NuGet][nuget-img]][nuget-link]  
 ![Nuget](https://img.shields.io/nuget/dt/Vapolia.SegmentedViews)
