@@ -11,6 +11,8 @@ dotnet add package Vapolia.SegmentedViews
 [nuget-link]: https://www.nuget.org/packages/Vapolia.SegmentedViews/
 [nuget-img]: https://img.shields.io/nuget/v/Vapolia.SegmentedViews
 
+![image](https://github.com/vapolia/SegmentedViews/assets/190756/0bd93272-739e-4bbe-85b6-dc407b1cab13)
+
 
 Platforms:
 - Android
@@ -32,9 +34,6 @@ builder.UseSegmentedView();
 # Examples
 
 See the SampleApp in this repo.
-
-![image](https://github.com/vapolia/SegmentedViews/assets/190756/0bd93272-739e-4bbe-85b6-dc407b1cab13)
-
 
 Declare the namespace:
 ```xaml
