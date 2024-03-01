@@ -1,4 +1,20 @@
-# SegmentedViews
+# Vapolia.SegmentedViews
+
+[![NuGet][nuget-img]][nuget-link]  
+![Nuget](https://img.shields.io/nuget/dt/Vapolia.SegmentedViews)  
+[![Publish To Nuget](https://github.com/vapolia/SegmentedViews/actions/workflows/main.yaml/badge.svg)](https://github.com/vapolia/SegmentedViews/actions/workflows/main.yaml)
+
+```cs
+dotnet add package Vapolia.SegmentedViews
+
+builder.UseSegmentedView();
+```
+
+[nuget-link]: https://www.nuget.org/packages/Vapolia.SegmentedViews/
+[nuget-img]: https://img.shields.io/nuget/v/Vapolia.SegmentedViews
+
+![image](https://github.com/vapolia/SegmentedViews/assets/190756/0bd93272-739e-4bbe-85b6-dc407b1cab13)
+
 
 Platforms:
 - Android
@@ -20,9 +36,6 @@ builder.UseSegmentedView();
 # Examples
 
 See the SampleApp in this repo.
-
-![image](https://github.com/vapolia/SegmentedViews/assets/190756/0bd93272-739e-4bbe-85b6-dc407b1cab13)
-
 
 Declare the namespace:
 ```xaml

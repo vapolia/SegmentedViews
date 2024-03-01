@@ -117,39 +117,44 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
     static void MapSelectedTextColor(SegmentedViewHandler handler, ISegmentedView control) 
     {
         var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Selected);
-        titleTextAttributes.ForegroundColor = control.SelectedTextColor.ToPlatform();
-        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
+        //TODO: Make writable
+        //titleTextAttributes.ForegroundColor = control.SelectedTextColor.ToPlatform();
+        //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
     }
 
     static void MapDisabledColor(SegmentedViewHandler handler, ISegmentedView control) 
     {
         var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Disabled);
-        titleTextAttributes.ForegroundColor = control.DisabledColor.ToPlatform();
-        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
+        //TODO: Make writable
+        //titleTextAttributes.ForegroundColor = control.DisabledColor.ToPlatform();
+        //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
     }
 
     static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control)
     {
         var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Normal);
-        titleTextAttributes.ForegroundColor = control.TextColor.ToPlatform();
-        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+        //TODO: Make writable
+        //titleTextAttributes.ForegroundColor = control.TextColor.ToPlatform();
+        //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
     }
     
     static void MapCharacterSpacing(SegmentedViewHandler handler, ITextStyle control)
     {
-        var kerningAdjustment = control.CharacterSpacing == 0 ? null : (float?)control.CharacterSpacing;
-        
-        var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Normal);
-        titleTextAttributes.KerningAdjustment = kerningAdjustment;
-        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+        //TODO: Make writable
 
-        titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Disabled);
-        titleTextAttributes.KerningAdjustment = kerningAdjustment;
-        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
-
-        titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Selected);
-        titleTextAttributes.KerningAdjustment = kerningAdjustment;
-        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
+        // var kerningAdjustment = control.CharacterSpacing == 0 ? null : (float?)control.CharacterSpacing;
+        //
+        // var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Normal);
+        // titleTextAttributes.KerningAdjustment = kerningAdjustment;
+        // handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+        //
+        // titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Disabled);
+        // titleTextAttributes.KerningAdjustment = kerningAdjustment;
+        // handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
+        //
+        // titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Selected);
+        // titleTextAttributes.KerningAdjustment = kerningAdjustment;
+        // handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
     }
 
     static void MapFont(SegmentedViewHandler handler, ITextStyle control)
@@ -158,7 +163,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         var uiFont = fontManager.GetFont(control.Font, UIFont.ButtonFontSize);
         
         var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Normal);
-        titleTextAttributes.Font = uiFont;
-        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+        //TODO: Make writable
+        //titleTextAttributes.Font = uiFont;
+        //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
     }
 }
