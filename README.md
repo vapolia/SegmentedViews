@@ -105,4 +105,4 @@ The width of a segment can be set in the following 3 ways:
 <segmented:Segment Item="Item1" Width="Auto" />
 ```
 
-This width follow the format of a Grid's ColumnsDefinition, so it should be easy to use.
+This width follow the format of a Grid's ColumnsDefinition, so it should be straightforward to use.
