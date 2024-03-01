@@ -25,7 +25,9 @@
             DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedItem="{Binding SegmentSelectedItem}"
-            ItemPadding="10,3" />
+            ItemPadding="10,3" 
+            WidthDefinitions="Auto,*,*"
+            />
 
         
         <HorizontalStackLayout Spacing="5">
@@ -49,6 +51,7 @@
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedItem="{Binding SegmentSelectedItem, Mode=OneWay}"
             SelectedIndex="{Binding SelectedIndex,Source={x:Reference TheSegmentView}}"
+            ItemsDefaultWidth="Auto"
             />
 
         <Label Text="{Binding InfoText2}" />

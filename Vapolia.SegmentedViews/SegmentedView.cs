@@ -2,10 +2,53 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Input;
 using Microsoft.Maui.Controls.Internals;
 
 namespace Vapolia.SegmentedViews;
+
+public class WidthDefinitionCollection : List<GridLength>
+{
+  public WidthDefinitionCollection() {}
+  
+  public WidthDefinitionCollection(IEnumerable<GridLength> definitions) : base(definitions)
+  {
+  }
+}
+
+public class WidthDefinitionCollectionTypeConverter : TypeConverter
+{
+  public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
+    => sourceType == typeof(string);
+  public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
+    => destinationType == typeof(string);
+
+  public override object ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object? value)
+  {
+    var strValue = value?.ToString();
+
+    if (strValue == null) 
+      throw new InvalidOperationException($"Cannot convert \"{strValue}\" into {typeof(WidthDefinitionCollection)}");
+    
+    var converter = new GridLengthTypeConverter();
+    var definitions = strValue.Split(',').Select(length => (GridLength?)converter.ConvertFromInvariantString(length)).ToList();
+    if(definitions.Any(d => d == null))
+      throw new InvalidOperationException($"Cannot convert \"{strValue}\" into {typeof(WidthDefinitionCollection)}");
+
+    return new WidthDefinitionCollection(definitions.Cast<GridLength>());
+  }
+
+
+  public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+  {
+    if (value is not WidthDefinitionCollection cdc)
+      throw new NotSupportedException();
+    var converter = new GridLengthTypeConverter();
+    return string.Join(", ", cdc.Select(cd => converter.ConvertToInvariantString(cd)));
+  }
+}
+
 
 [ContentProperty(nameof(Children))]
 public class SegmentedView : View, ISegmentedView, IFontElement
@@ -18,7 +61,6 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(SegmentedView), propertyChanged: (bindable, value, newValue) => ((SegmentedView)bindable).OnItemsSourceChanged((IEnumerable?)value, (IEnumerable?)newValue));
   public static readonly BindableProperty TextPropertyNameProperty = BindableProperty.Create(nameof(TextPropertyName), typeof(string), typeof(SegmentedView));
   public static readonly BindableProperty TextConverterProperty = BindableProperty.Create(nameof(TextConverter), typeof(IValueConverter), typeof(SegmentedView));
-  public static readonly BindableProperty DisplayModeProperty = BindableProperty.Create(nameof(DisplayMode), typeof(SegmentDisplayMode), typeof(SegmentedView), SegmentDisplayMode.EqualWidth);
   public static readonly BindableProperty TintColorProperty = BindableProperty.Create(nameof(TintColor), typeof(Color), typeof(SegmentedView), Colors.Blue);
   public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(SegmentedView), Colors.Black);
   public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(SegmentedView), Colors.White);
@@ -39,6 +81,10 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public static readonly BindableProperty SelectionChangedCommandProperty = BindableProperty.Create(nameof(SelectionChangedCommand), typeof(ICommand), typeof(SegmentedView));
   public static readonly BindableProperty SelectionChangedCommandParameterProperty = BindableProperty.Create(nameof(SelectionChangedCommandParameter), typeof(object), typeof(SegmentedView));
 
+  public static readonly BindableProperty WidthDefinitionsProperty = BindableProperty.Create(nameof(WidthDefinitions), typeof(WidthDefinitionCollection), typeof(SegmentedView));
+  public static readonly BindableProperty ItemsDefaultWidthProperty = BindableProperty.Create(nameof(ItemsDefaultWidth), typeof(GridLength), typeof(SegmentedView), GridLength.Auto);
+  
+    
   // /// <summary>
   // /// Container'border color
   // /// </summary>
@@ -64,8 +110,6 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public string? TextPropertyName { get => (string?)GetValue(TextPropertyNameProperty); set => SetValue(TextPropertyNameProperty, value); }
   public IValueConverter? TextConverter { get => (IValueConverter?)GetValue(TextConverterProperty); set => SetValue(TextConverterProperty, value); }
 
-  public SegmentDisplayMode DisplayMode { get => (SegmentDisplayMode)GetValue(DisplayModeProperty); set => SetValue(DisplayModeProperty, value); } 
-  
   /// <summary>
   /// Color of both the border of the container, and the background of selected segments
   /// </summary>
@@ -138,8 +182,16 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   /// </summary>
   public ICommand? SelectionChangedCommand { get => (ICommand?)GetValue(SelectionChangedCommandProperty); set => SetValue(SelectionChangedCommandProperty, value); }
   public object? SelectionChangedCommandParameter { get => GetValue(SelectionChangedCommandParameterProperty); set => SetValue(SelectionChangedCommandParameterProperty, value); }
-  #endregion
 
+  /// <summary>
+  /// Used only with ItemsSource to set the Width of each item
+  /// </summary>
+  [TypeConverter(typeof(WidthDefinitionCollectionTypeConverter))]
+  public WidthDefinitionCollection? WidthDefinitions { get => (WidthDefinitionCollection?)GetValue(WidthDefinitionsProperty); set => SetValue(WidthDefinitionsProperty, value); }
+
+  [TypeConverter(typeof(GridLengthTypeConverter))]
+  public GridLength ItemsDefaultWidth { get => (GridLength)GetValue(ItemsDefaultWidthProperty); set => SetValue(ItemsDefaultWidthProperty, value); }
+  #endregion
 
   public SegmentedView()
   {

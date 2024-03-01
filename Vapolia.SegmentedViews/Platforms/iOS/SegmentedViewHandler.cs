@@ -1,17 +1,15 @@
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using UIKit;
-using Font = Microsoft.Maui.Font;
 
 namespace Vapolia.SegmentedViews.Platforms.Ios;
 
 internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedControl>
 {
-    bool disableButtonNotifications;
-
     public static IPropertyMapper<ISegmentedView, SegmentedViewHandler> Mapper = new PropertyMapper<ISegmentedView, SegmentedViewHandler>(ViewMapper)
     {
         [nameof(ISegmentedView.Children)] = MapChildren,
+        [nameof(ISegmentedView.WidthDefinitions)] = MapChildren,
         [nameof(ISegmentedView.IsEnabled)] = MapIsEnabled2,
         [nameof(ISegmentedView.SelectedIndex)] = MapSelectedIndex,
         
@@ -54,24 +52,44 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
 
     void PlatformView_ValueChanged(object? sender, EventArgs e)
     {
-        if(disableButtonNotifications)
-            return;
-
         var i = (int)PlatformView.SelectedSegment;
         if (VirtualView.SelectedIndex != i)
             VirtualView.SetSelectedIndex(i);
     }
 
-    static void MapChildren(SegmentedViewHandler handler, ISegmentedView control)
+    static void MapChildren(SegmentedViewHandler handler, ISegmentedView virtualView)
     {
-        var virtualView = handler.VirtualView;
         var segmentControl = handler.PlatformView;
         segmentControl.RemoveAllSegments();
 
-        for (var i = 0; i < virtualView.Children.Count; i++)
-            segmentControl.InsertSegment(virtualView.Children[i].GetText(virtualView), i, true);
+        var widths = virtualView.GetWidths();
+        
+        var wrapContent = widths.All(o => o.IsAuto);
+        segmentControl.ApportionsSegmentWidthsByContent = wrapContent;
 
-        MapSelectedIndex(handler, control);
+        for (var i = 0; i < virtualView.Children.Count; i++)
+        {
+            var segment = virtualView.Children[i];
+            var width = widths[i];
+            segmentControl.InsertSegment(segment.GetText(virtualView), i, true);
+
+            segmentControl.SetEnabled(true, i);
+            
+            if (width.IsStar || width.IsAuto)
+                segmentControl.SetWidth(0, i); //autosize
+            else
+            {
+                if (width.Value == 0)
+                {
+                    segmentControl.SetWidth(1, i);
+                    segmentControl.SetEnabled(false, i);
+                }
+                else
+                    segmentControl.SetWidth((nfloat)width.Value, i);
+            }
+        }
+
+        MapSelectedIndex(handler, virtualView);
     }
 
     static void MapTintColor(SegmentedViewHandler handler, ISegmentedView control)

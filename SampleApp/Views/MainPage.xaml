@@ -13,17 +13,18 @@
         
         <segmented:SegmentedView  
             x:Name="TheSegmentView" BackgroundColor="Yellow"
-            HorizontalOptions="Fill" DisplayMode="EqualWidth" IsEnabled="True"
+            HorizontalOptions="Fill" IsEnabled="True"
             SelectedTextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
             TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
             TintColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}" 
             DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedItem="{Binding SegmentSelectedItem}"
-            ItemPadding="10,5">
+            ItemPadding="10,5"
+            ItemsDefaultWidth="*">
             
             <segmented:Segment Item="Tab1" />
-            <segmented:Segment Item="Some text Tab2" />
+            <segmented:Segment Item="Some text Tab2" Width="Auto" />
             <segmented:Segment Item="{Binding Text,Source={x:Reference TheEntry}}" />
             
         </segmented:SegmentedView>

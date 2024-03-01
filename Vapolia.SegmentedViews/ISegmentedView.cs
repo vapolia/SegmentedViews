@@ -2,22 +2,8 @@ using System.Collections.ObjectModel;
 
 namespace Vapolia.SegmentedViews;
 
-public enum SegmentDisplayMode
-{
-    /// <summary>
-    /// All segments will have the same width
-    /// </summary>
-    EqualWidth,
-    /// <summary>
-    /// Each segment will fit its content
-    /// </summary>
-    Content
-}
-
 public interface ISegmentedView : IView, ITextStyle
 {
-    SegmentDisplayMode DisplayMode { get; set; }
-
     //public Color TextColor { get; }
     public Color TintColor { get; }
     public Color SelectedTextColor { get; }
@@ -32,4 +18,6 @@ public interface ISegmentedView : IView, ITextStyle
     internal string? TextPropertyName { get; }
     internal IValueConverter? TextConverter { get; }
     internal  ObservableCollection<Segment> Children { get; }
+    internal WidthDefinitionCollection? WidthDefinitions { get; }
+    internal GridLength ItemsDefaultWidth { get; }
 }

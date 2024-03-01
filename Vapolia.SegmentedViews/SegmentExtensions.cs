@@ -16,4 +16,16 @@ internal static class SegmentExtensions
 
         return obj?.ToString() ?? string.Empty;
     }
+    
+    public static List<GridLength> GetWidths(this ISegmentedView segmentedView)
+    {
+        return segmentedView.Children.Select((segment,i) =>
+        {
+            if (segment.Width != null)
+                return segment.Width.Value;
+            if(segmentedView.WidthDefinitions?.Count > i)
+                return segmentedView.WidthDefinitions[i];
+            return segmentedView.ItemsDefaultWidth;
+        }).ToList();
+    }
 }

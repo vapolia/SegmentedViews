@@ -15,6 +15,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     public static IPropertyMapper<ISegmentedView, SegmentedViewHandler> Mapper = new PropertyMapper<ISegmentedView, SegmentedViewHandler>(ViewMapper)
     {
         [nameof(ISegmentedView.Children)] = MapChildren,
+        [nameof(ISegmentedView.WidthDefinitions)] = MapChildren,
         [nameof(ISegmentedView.IsEnabled)] = MapIsEnabled2,
         [nameof(ISegmentedView.SelectedIndex)] = MapSelectedIndex,
         
@@ -41,9 +42,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
 
     protected override MaterialButtonToggleGroup CreatePlatformView()
     {
-        //using var layoutInflater = LayoutInflater.From(Context)!;
-        //var rg = (RadioGroup)layoutInflater.Inflate(Resource.Layout.RadioGroup, null)!;
-
         //Xamarin.AndroidX.Compose.Material3
         //Material3.
         
@@ -111,45 +109,39 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         }
     }
 
-    static void MapChildren(SegmentedViewHandler handler, ISegmentedView control)
+    static void MapChildren(SegmentedViewHandler handler, ISegmentedView virtualView)
     {
-        var virtualView = handler.VirtualView;
         var rg = handler.PlatformView;
         rg.RemoveAllViews();
         handler.selectedButton = null;
 
-        //using var layoutInflater = LayoutInflater.From(handler.Context)!;       
+        var widths = virtualView.GetWidths();
         
-        for (var i = 0; i < virtualView.Children.Count; i++)
+        var i = 0;
+        foreach (var segment in virtualView.Children)
         {
-            var o = virtualView.Children[i];
-            
-            //var rb = (RadioButton)layoutInflater.Inflate(Resource.Layout.RadioButton, null)!;
             var rb = new MaterialButton(handler.Context, null, Resource.Attribute.materialButtonOutlinedStyle);
-            //rb.SetButtonDrawable(null);
-            //rb.SetForegroundGravity(GravityFlags.Center);
             
-            //rb.SetSingleLine(true);
-            //rb.Ellipsize = TextUtils.TruncateAt.End;
+            rb.Text = segment.GetText(virtualView);
+            SetTextColor(rb, virtualView);
+
+            var width = widths[i];
             
-            rb.Text = o.GetText(control);
-            SetTextColor(rb, control);
+            if(width.IsStar)
+                rb.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, (float)width.Value);
+            else if(width.IsAuto)
+                rb.LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.MatchParent);
+            else if(width.IsAbsolute)
+                rb.LayoutParameters = new LinearLayout.LayoutParams((int)handler.Context.ToPixels(width.Value), ViewGroup.LayoutParams.MatchParent);
+            else //relative, what does that mean ?
+                rb.LayoutParameters = new LinearLayout.LayoutParams((int)handler.Context.ToPixels(width.Value), ViewGroup.LayoutParams.MatchParent);
 
-            // rb.SetBackgroundResource(
-            //     i == 0 ? Resource.Drawable.segmented_control_first_background :
-            //     i == virtualView.Children.Count - 1 ? Resource.Drawable.segmented_control_last_background :
-            //     Resource.Drawable.segmented_control_background);
-
-            if(control.DisplayMode == SegmentDisplayMode.EqualWidth)
-                rb.LayoutParameters = new MaterialButtonToggleGroup.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, 1f);
-            else
-                rb.LayoutParameters = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.MatchParent);
-
-            ConfigureRadioButton(handler, control, rb);
+            ConfigureRadioButton(handler, virtualView, rb);
             rg.AddView(rb);
+            i++;
         }
 
-        MapSelectedIndex(handler, control);
+        MapSelectedIndex(handler, virtualView);
         
         //rg.ForceLayout();
         //rg.RequestLayout();
@@ -159,19 +151,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     static void ConfigureRadioButton(SegmentedViewHandler handler, ISegmentedView control, MaterialButton rb)
     {
         var virtualView = handler.VirtualView;
-
-#region change colors
-        // var drawableContainerState = (DrawableContainer.DrawableContainerState)rb.Background!.GetConstantState()!;
-        // var drawables = drawableContainerState.GetChildren();
-        //
-        // var selectedShape = drawables[0] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)drawables[0]).Drawable;
-        // var unselectedShape = drawables[1] as GradientDrawable ?? (GradientDrawable)((InsetDrawable)drawables[1]).Drawable;
-        //
-        // var color = virtualView.IsEnabled ? virtualView.TintColor.ToPlatform() : virtualView.DisabledColor.ToPlatform();
-        //
-        // selectedShape.SetStroke(3, color);
-        // selectedShape.SetColor(color);
-        // unselectedShape.SetStroke(3, color);
 
         rb.BackgroundTintList = new (
         [
@@ -184,11 +163,10 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
             virtualView.DisabledColor.ToPlatform(),
             virtualView.TintColor.ToPlatform(),
         ]);
-#endregion
 
         rb.Enabled = virtualView.IsEnabled;
         
-        var fontManager = handler.Services.GetRequiredService<IFontManager>();
+        var fontManager = handler.Services.GetRequiredService<IFontManager>()!;
         rb.UpdateFont(control, fontManager);
         
         var padding = handler.Context.ToPixels(control.ItemPadding);
@@ -197,8 +175,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     
     static void MapSelectedIndex(SegmentedViewHandler handler, ISegmentedView control)
     {
-        //var virtualView = handler.VirtualView;
-
         var button = (MaterialButton?)handler.PlatformView.GetChildAt(control.SelectedIndex);
         
         handler.disableButtonNotifications = true;
@@ -208,7 +184,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
             {
                 if (handler.selectedButton.Checked)
                     handler.selectedButton.Checked = false;
-                //SetTextColor(handler.selectedButton, virtualView);
             }
 
             if (button?.Checked == false)
@@ -219,9 +194,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
             handler.disableButtonNotifications = false;
         }
 
-        // if (button != null)
-        //     SetTextColor(button, virtualView);
-        
         handler.selectedButton = button;
     }
 
@@ -238,13 +210,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
                 virtualView.SelectedTextColor.ToPlatform(),
                 virtualView.TextColor.ToPlatform(),
             ]);
-        
-        // var textColor =
-        //     isSelected ? virtualView.SelectedTextColor.ToPlatform() 
-        //     : virtualView.IsEnabled ? virtualView.TextColor.ToPlatform() 
-        //     : virtualView.DisabledColor.ToPlatform();
-        //
-        // rb.ForegroundTintList = ColorStateList.ValueOf(textColor);
     }
 
     static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control) 
@@ -264,7 +229,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
 
     static void MapFont(SegmentedViewHandler handler, ITextStyle control)
     {
-        var fontManager = handler.Services.GetRequiredService<IFontManager>();
+        var fontManager = handler.Services.GetRequiredService<IFontManager>()!;
         DoForAllChildren(handler, v => v.UpdateFont(control, fontManager));
     }
     
@@ -293,15 +258,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         {
             var v = (MaterialButton)handler.PlatformView.GetChildAt(i)!;
             action(v);
-        }
-    }
-
-    static void DoForAllChildren(SegmentedViewHandler handler, Action<MaterialButton, int> action)
-    {
-        for (var i = 0; i < handler.PlatformView.ChildCount; i++)
-        {
-            var v = (MaterialButton)handler.PlatformView.GetChildAt(i)!;
-            action(v, i);
         }
     }
 }
