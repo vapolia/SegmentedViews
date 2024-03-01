@@ -72,3 +72,37 @@ Or a dynamic segment view:
             SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}" />
 ```
+
+## Width of segment items
+
+The width of a segment can be set in the following 3 ways:
+
+* On the `ItemsDefaultWidth` property of `SegmentedView`
+```xml
+<segmented:SegmentedView  
+    x:Name="TheSegmentView"
+    SelectedIndex="0"
+    SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+    SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
+    SelectedItem="{Binding SegmentSelectedItem}"
+    ItemsDefaultWidth="150" />
+```
+
+* On the `ItemsWidthDefinitions` property of `SegmentedView`
+```xml
+<segmented:SegmentedView  
+    x:Name="TheSegmentView"
+    SelectedIndex="0"
+    SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+    SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
+    SelectedItem="{Binding SegmentSelectedItem}"
+    ItemsWidthDefinitions="150,Auto,*,2*">
+```
+
+* Directly on the `Width` property of a `Segment`
+```xml
+<segmented:Segment Item="Item1" Width="150" />
+<segmented:Segment Item="Item1" Width="Auto" />
+```
+
+This width follow the format of a Grid's ColumnsDefinition, so it should be easy to use.
