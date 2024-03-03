@@ -13,20 +13,34 @@
     </ContentPage.Resources>
         
     <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
+        <View.Resources>
+            <Style x:Key="SegmentedViewMaterial3" TargetType="segmented:SegmentedView">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="SelectedTextColor" Value="DarkGreen"/>
+                <Setter Property="TintColor" Value="LightGreen"/>
+                <Setter Property="BorderColor" Value="LightGray"/>
+                <Setter Property="BackgroundColor" Value="Transparent"/>
+                <Setter Property="DisabledColor" Value="#f0f0f0"/>
+            </Style>
+            <Style x:Key="SegmentedViewMaterial2" TargetType="segmented:SegmentedView">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="SelectedTextColor" Value="#8f36ea"/>
+                <Setter Property="TintColor" Value="#f5effd"/>
+                <Setter Property="BorderColor" Value="LightGray"/>
+                <Setter Property="BackgroundColor" Value="Transparent"/>
+                <Setter Property="DisabledColor" Value="#f0f0f0"/>
+            </Style>
+        </View.Resources>
         
         <segmented:SegmentedView
+            x:Name="TheSegmentView"
             ItemsSource="{Binding Persons}"
             TextPropertyName="LastName"
             SelectedIndex="0"
-            x:Name="TheSegmentView"
-            HorizontalOptions="Fill" 
-            IsEnabled="True"
-            SelectedTextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
-            TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
-            TintColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}" 
-            DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedItem="{Binding SegmentSelectedItem}"
+            Style="{StaticResource SegmentedViewMaterial2}"
+            HorizontalOptions="Fill" IsEnabled="True" 
             ItemPadding="10,3" 
             WidthDefinitions="Auto,*,*"
             />

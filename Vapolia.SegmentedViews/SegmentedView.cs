@@ -23,6 +23,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(SegmentedView), Colors.White);
   public static readonly BindableProperty DisabledColorProperty = BindableProperty.Create(nameof(DisabledColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
   public new static readonly BindableProperty BackgroundColorProperty = BindableProperty.Create(nameof(BackgroundColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
+  public new static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
 
 #region Font
   public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(IFontElement), default(string), propertyChanged: OnFontFamilyChanged);
@@ -72,24 +73,25 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   /// <summary>
   /// Color of both the border of the container, and the background of selected segments
   /// </summary>
-  public Color TintColor { get => (Color?)GetValue(TintColorProperty) ?? Colors.Transparent; set => SetValue(TintColorProperty, value); }
+  public Color TintColor { get => (Color?)GetValue(TintColorProperty) ?? (Color)TintColorProperty.DefaultValue; set => SetValue(TintColorProperty, value); }
   /// <summary>
   /// Color of the text of unselected segments 
   /// </summary>
-  public Color TextColor { get => (Color?)GetValue(TextColorProperty) ?? Colors.Transparent; set => SetValue(TextColorProperty, value); }
+  public Color TextColor { get => (Color?)GetValue(TextColorProperty) ?? (Color)TextColorProperty.DefaultValue; set => SetValue(TextColorProperty, value); }
   /// <summary>
   /// Color of the text of the selected segment 
   /// </summary>
-  public Color SelectedTextColor { get => (Color?)GetValue(SelectedTextColorProperty) ?? Colors.Transparent; set => SetValue(SelectedTextColorProperty, value); }
+  public Color SelectedTextColor { get => (Color?)GetValue(SelectedTextColorProperty) ?? (Color)SelectedTextColorProperty.DefaultValue; set => SetValue(SelectedTextColorProperty, value); }
   /// <summary>
   /// Color of everything when the control is disabled, except the text of the selected segment
   /// </summary>
-  public Color DisabledColor { get => (Color?)GetValue(DisabledColorProperty) ?? Colors.Transparent; set => SetValue(DisabledColorProperty, value); }
+  public Color DisabledColor { get => (Color?)GetValue(DisabledColorProperty) ?? (Color)DisabledColorProperty.DefaultValue; set => SetValue(DisabledColorProperty, value); }
   // public Color BorderColor { get => (Color)GetValue(BorderColorProperty); set => SetValue(BorderColorProperty, value); }
   // public double BorderWidth { get => (double)GetValue(BorderWidthProperty); set => SetValue(BorderWidthProperty, value); }
 
-  public new Color BackgroundColor { get => (Color?)GetValue(BackgroundColorProperty) ?? Colors.Transparent; set => SetValue(BackgroundColorProperty, value); }
-
+  public new Color BackgroundColor { get => (Color?)GetValue(BackgroundColorProperty) ?? (Color)BackgroundColorProperty.DefaultValue; set => SetValue(BackgroundColorProperty, value); }
+  public new Color BorderColor { get => (Color?)GetValue(BorderColorProperty) ?? (Color)BorderColorProperty.DefaultValue; set => SetValue(BorderColorProperty, value); }
+  
   #region Font
   Microsoft.Maui.Font ITextStyle.Font => this.ToFont();
   

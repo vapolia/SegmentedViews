@@ -1,3 +1,4 @@
+using Android.Content.Res;
 using Android.Views;
 using Android.Widget;
 using Google.Android.Material.Button;
@@ -30,9 +31,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         [nameof(ITextStyle.TextColor)] = MapTextColor,
         [nameof(ISegmentedView.DisabledColor)] = ReconfigureRadioButtons,
         [nameof(ISegmentedView.BackgroundColor)] = ReconfigureRadioButtons,
-        
-        // [nameof(ISegmentedControl.BorderColor)] = MapBorderColor,
-        // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
+        [nameof(ISegmentedView.BorderColor)] = MapBorderColor,
+        // [nameof(ISegmentedView.BorderWidth)] = MapBorderWidth,
     };
 
 
@@ -168,10 +168,11 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
             virtualView.BackgroundColor.ToPlatform(),
         ]);
 
+        rb.StrokeColor = handler.BorderColor;
         rb.Enabled = virtualView.IsEnabled;
         
         var fontManager = handler.Services.GetRequiredService<IFontManager>()!;
-        //rb.UpdateFont(control, fontManager);
+        rb.UpdateFont(control, fontManager);
         
         var padding = handler.Context.ToPixels(control.ItemPadding);
         rb.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
@@ -217,24 +218,45 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
 
     static void SetTextColor(MaterialButton button, ISegmentedView virtualView)
     {
-        button.ForegroundTintList = new (
+        var colors = new ColorStateList(
             [
                 [-global::Android.Resource.Attribute.StateEnabled],
-                [global::Android.Resource.Attribute.StateChecked],            
-                [global::Android.Resource.Attribute.StateEnabled],
-            ], 
+                [global::Android.Resource.Attribute.StateChecked],
+                [global::Android.Resource.Attribute.Checked],
+                [global::Android.Resource.Attribute.StateSelected],
+                [global::Android.Resource.Attribute.StatePressed],
+                [],
+            ],
             [
-                virtualView.TextColor.ToPlatform(), //not DisabledColor otherwise text color = background color and text is not visible
+                virtualView.TextColor.ToPlatform(), //do not use DisabledColor otherwise text color = background color and text is not visible. Create DisabledTextColor instead ?
+                virtualView.SelectedTextColor.ToPlatform(),
+                virtualView.SelectedTextColor.ToPlatform(),
+                virtualView.SelectedTextColor.ToPlatform(),
                 virtualView.SelectedTextColor.ToPlatform(),
                 virtualView.TextColor.ToPlatform(),
             ]);
+        
+        //button.ForegroundTintList //Does nothing
+        button.SetTextColor(colors);
     }
+
+    private ColorStateList? BorderColor;
     
-    // static void MapBorderColor(SegmentedControlHandler handler, ISegmentedControl control)
-    // {
-    //     handler.PlatformView.bot
-    // }
-    //
+    static void MapBorderColor(SegmentedViewHandler handler, ISegmentedView virtualView)
+    {
+        handler.BorderColor = new ColorStateList(
+            [
+                [-global::Android.Resource.Attribute.StateEnabled],
+                [],
+            ],
+            [
+                virtualView.DisabledColor.ToPlatform(),
+                virtualView.BorderColor.ToPlatform(),
+            ]);
+        
+        DoForAllChildren(handler, v => v.StrokeColor = handler.BorderColor);
+    }
+
     // static void MapBorderWidth(SegmentedControlHandler handler, ISegmentedControl control)
     // {
     // }
@@ -245,7 +267,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     static void MapFont(SegmentedViewHandler handler, ITextStyle control)
     {
         var fontManager = handler.Services.GetRequiredService<IFontManager>()!;
-        //DoForAllChildren(handler, v => v.UpdateFont(control, fontManager));
+        DoForAllChildren(handler, v => v.UpdateFont(control, fontManager));
     }
     
     private static void MapIsSelectionRequired(SegmentedViewHandler handler, ISegmentedView control)

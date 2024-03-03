@@ -10,14 +10,30 @@
     > 
 
     <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
+        <View.Resources>
+            <Style x:Key="SegmentedViewMaterial3" TargetType="segmented:SegmentedView">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="SelectedTextColor" Value="DarkGreen"/>
+                <Setter Property="TintColor" Value="LightGreen"/>
+                <Setter Property="BorderColor" Value="LightGray"/>
+                <Setter Property="BackgroundColor" Value="Transparent"/>
+                <Setter Property="DisabledColor" Value="#f0f0f0"/>
+            </Style>
+            <Style x:Key="SegmentedViewMaterial2" TargetType="segmented:SegmentedView">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="SelectedTextColor" Value="#8f36ea"/>
+                <Setter Property="TintColor" Value="#f5effd"/>
+                <Setter Property="BorderColor" Value="LightGray"/>
+                <Setter Property="BackgroundColor" Value="Transparent"/>
+                <Setter Property="DisabledColor" Value="#f0f0f0"/>
+            </Style>
+        </View.Resources>
         
         <segmented:SegmentedView  
             x:Name="TheSegmentView" 
-            HorizontalOptions="Fill" IsEnabled="True"
-            SelectedTextColor="{AppThemeBinding Light={StaticResource TextDark}, Dark={StaticResource TextLight}}" 
-            TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
-            TintColor="{AppThemeBinding Light={StaticResource Yellow300Accent}, Dark={StaticResource Yellow100Accent}}" 
-            DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
+            Style="{StaticResource SegmentedViewMaterial2}"
+            HorizontalOptions="Fill" 
+            IsEnabled="True"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedIndex="{Binding SegmentSelectedIndex}"
             ItemPadding="10,5"
