@@ -19,20 +19,20 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         [nameof(ISegmentedView.WidthDefinitions)] = MapChildren,
         [nameof(ISegmentedView.IsEnabled)] = MapIsEnabled2,
         [nameof(ISegmentedView.SelectedIndex)] = MapSelectedIndex,
-        
+        [nameof(ISegmentedView.IsSelectionRequired)] = MapIsSelectionRequired,
+
         [nameof(ISegmentedView.ItemPadding)] = MapItemPadding,
-        [nameof(ISegmentedView.TintColor)] = ReconfigureRadioButtons,
-        
-        [nameof(ISegmentedView.SelectedTextColor)] = MapTextColor,
-        [nameof(ITextStyle.TextColor)] = MapTextColor,
-        [nameof(ISegmentedView.DisabledColor)] = ReconfigureRadioButtons,
-        
-        // [nameof(ISegmentedControl.BorderColor)] = MapBorderColor,
-        // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
         [nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
         [nameof(ITextStyle.Font)] = MapFont,
         
-        [nameof(ISegmentedView.IsSelectionRequired)] = MapIsSelectionRequired,
+        [nameof(ISegmentedView.TintColor)] = ReconfigureRadioButtons,
+        [nameof(ISegmentedView.SelectedTextColor)] = MapTextColor,
+        [nameof(ITextStyle.TextColor)] = MapTextColor,
+        [nameof(ISegmentedView.DisabledColor)] = ReconfigureRadioButtons,
+        [nameof(ISegmentedView.BackgroundColor)] = ReconfigureRadioButtons,
+        
+        // [nameof(ISegmentedControl.BorderColor)] = MapBorderColor,
+        // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
     };
 
 
@@ -158,13 +158,14 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         rb.BackgroundTintList = new (
         [
             [-global::Android.Resource.Attribute.StateEnabled], //disabled
+            [global::Android.Resource.Attribute.StateChecked],  // checked            
             [global::Android.Resource.Attribute.StateEnabled],  //enabled
-            //[-global::Android.Resource.Attribute.Checked],    // unchecked
-            //[global::Android.Resource.Attribute.Checked],     // checked            
+            //[-global::Android.Resource.Attribute.StateChecked],    // unchecked
         ], 
         [
             virtualView.DisabledColor.ToPlatform(),
             virtualView.TintColor.ToPlatform(),
+            virtualView.BackgroundColor.ToPlatform(),
         ]);
 
         rb.Enabled = virtualView.IsEnabled;

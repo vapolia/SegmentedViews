@@ -2,53 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Globalization;
 using System.Windows.Input;
 using Microsoft.Maui.Controls.Internals;
 
 namespace Vapolia.SegmentedViews;
-
-public class WidthDefinitionCollection : List<GridLength>
-{
-  public WidthDefinitionCollection() {}
-  
-  public WidthDefinitionCollection(IEnumerable<GridLength> definitions) : base(definitions)
-  {
-  }
-}
-
-public class WidthDefinitionCollectionTypeConverter : TypeConverter
-{
-  public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-    => sourceType == typeof(string);
-  public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
-    => destinationType == typeof(string);
-
-  public override object ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object? value)
-  {
-    var strValue = value?.ToString();
-
-    if (strValue == null) 
-      throw new InvalidOperationException($"Cannot convert \"{strValue}\" into {typeof(WidthDefinitionCollection)}");
-    
-    var converter = new GridLengthTypeConverter();
-    var definitions = strValue.Split(',').Select(length => (GridLength?)converter.ConvertFromInvariantString(length)).ToList();
-    if(definitions.Any(d => d == null))
-      throw new InvalidOperationException($"Cannot convert \"{strValue}\" into {typeof(WidthDefinitionCollection)}");
-
-    return new WidthDefinitionCollection(definitions.Cast<GridLength>());
-  }
-
-
-  public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-  {
-    if (value is not WidthDefinitionCollection cdc)
-      throw new NotSupportedException();
-    var converter = new GridLengthTypeConverter();
-    return string.Join(", ", cdc.Select(cd => converter.ConvertToInvariantString(cd)));
-  }
-}
-
 
 [ContentProperty(nameof(Children))]
 public class SegmentedView : View, ISegmentedView, IFontElement
@@ -65,6 +22,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(SegmentedView), Colors.Black);
   public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(SegmentedView), Colors.White);
   public static readonly BindableProperty DisabledColorProperty = BindableProperty.Create(nameof(DisabledColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
+  public new static readonly BindableProperty BackgroundColorProperty = BindableProperty.Create(nameof(BackgroundColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
 
 #region Font
   public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(IFontElement), default(string), propertyChanged: OnFontFamilyChanged);
@@ -114,21 +72,23 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   /// <summary>
   /// Color of both the border of the container, and the background of selected segments
   /// </summary>
-  public Color TintColor { get => (Color)GetValue(TintColorProperty); set => SetValue(TintColorProperty, value); }
+  public Color TintColor { get => (Color?)GetValue(TintColorProperty) ?? Colors.Transparent; set => SetValue(TintColorProperty, value); }
   /// <summary>
   /// Color of the text of unselected segments 
   /// </summary>
-  public Color TextColor { get => (Color)GetValue(TextColorProperty); set => SetValue(TextColorProperty, value); }
+  public Color TextColor { get => (Color?)GetValue(TextColorProperty) ?? Colors.Transparent; set => SetValue(TextColorProperty, value); }
   /// <summary>
   /// Color of the text of the selected segment 
   /// </summary>
-  public Color SelectedTextColor { get => (Color)GetValue(SelectedTextColorProperty); set => SetValue(SelectedTextColorProperty, value); }
+  public Color SelectedTextColor { get => (Color?)GetValue(SelectedTextColorProperty) ?? Colors.Transparent; set => SetValue(SelectedTextColorProperty, value); }
   /// <summary>
   /// Color of everything when the control is disabled, except the text of the selected segment
   /// </summary>
-  public Color DisabledColor { get => (Color)GetValue(DisabledColorProperty); set => SetValue(DisabledColorProperty, value); }
+  public Color DisabledColor { get => (Color?)GetValue(DisabledColorProperty) ?? Colors.Transparent; set => SetValue(DisabledColorProperty, value); }
   // public Color BorderColor { get => (Color)GetValue(BorderColorProperty); set => SetValue(BorderColorProperty, value); }
   // public double BorderWidth { get => (double)GetValue(BorderWidthProperty); set => SetValue(BorderWidthProperty, value); }
+
+  public new Color BackgroundColor { get => (Color?)GetValue(BackgroundColorProperty) ?? Colors.Transparent; set => SetValue(BackgroundColorProperty, value); }
 
   #region Font
   Microsoft.Maui.Font ITextStyle.Font => this.ToFont();
@@ -197,7 +157,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   [TypeConverter(typeof(GridLengthTypeConverter))]
   public GridLength ItemsDefaultWidth { get => (GridLength)GetValue(ItemsDefaultWidthProperty); set => SetValue(ItemsDefaultWidthProperty, value); }
   #endregion
-
+  
   public SegmentedView()
   {
     Children.CollectionChanged += (sender, args) =>

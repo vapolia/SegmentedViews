@@ -10,6 +10,7 @@ public interface ISegmentedView : IView, ITextStyle
     public Color DisabledColor { get; }
     // public Color BorderColor { get; }
     // public double BorderWidth { get; }
+    public Color BackgroundColor { get; }
     public Thickness ItemPadding { get; set; }
 
     public int SelectedIndex { get; }
