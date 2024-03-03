@@ -14,13 +14,14 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         [nameof(ISegmentedView.SelectedIndex)] = MapSelectedIndex,
         
         [nameof(ISegmentedView.ItemPadding)] = MapItemPadding,
+
         [nameof(ISegmentedView.TintColor)] = MapTintColor,
-        
         [nameof(ISegmentedView.SelectedTextColor)] = MapSelectedTextColor,
         [nameof(ITextStyle.TextColor)] = MapTextColor,
         [nameof(ISegmentedView.DisabledColor)] = MapDisabledColor,
+        [nameof(ISegmentedView.BorderColor)] = MapBorderColor,
+        [nameof(ISegmentedView.BackgroundColor)] = MapBackgroundColor,
         
-        // [nameof(ISegmentedControl.BorderColor)] = MapBorderColor,
         // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
         [nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
         [nameof(ITextStyle.Font)] = MapFont,
@@ -130,6 +131,16 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         //TODO: Make writable
         //titleTextAttributes.ForegroundColor = control.DisabledColor.ToPlatform();
         //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
+    }
+
+    static void MapBorderColor(SegmentedViewHandler handler, ISegmentedView control) 
+    {
+        //todo
+    }
+
+    static void MapBackgroundColor(SegmentedViewHandler handler, ISegmentedView control) 
+    {
+        //todo
     }
 
     static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control)
