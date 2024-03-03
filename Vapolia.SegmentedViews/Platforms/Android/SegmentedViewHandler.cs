@@ -159,8 +159,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         [
             [-global::Android.Resource.Attribute.StateEnabled], //disabled
             [global::Android.Resource.Attribute.StateChecked],  // checked            
-            [global::Android.Resource.Attribute.StateEnabled],  //enabled
-            //[-global::Android.Resource.Attribute.StateChecked],    // unchecked
+            [],  //default
         ], 
         [
             virtualView.DisabledColor.ToPlatform(),
@@ -236,7 +235,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
                 virtualView.TextColor.ToPlatform(),
             ]);
         
-        //button.ForegroundTintList //Does nothing
         button.SetTextColor(colors);
     }
 
