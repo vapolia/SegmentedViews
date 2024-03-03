@@ -4,7 +4,9 @@
              xmlns:viewModels="clr-namespace:SampleApp.ViewModels"
              x:Class="SampleApp.Views.DynamicItemsPage"
              x:DataType="viewModels:DynamicItemsPageViewModel"
-             Title="Advanced demo">
+             Title="Advanced demo"
+             BackgroundColor="Wheat"
+             >
     
     <ContentPage.Resources>
         <viewModels:PersonTextConverter x:Key="PersonTextConverter" />
