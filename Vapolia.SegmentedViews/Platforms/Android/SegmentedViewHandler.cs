@@ -1,6 +1,7 @@
 using Android.Views;
 using Android.Widget;
 using Google.Android.Material.Button;
+using Google.Android.Material.Internal;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using Orientation = Android.Widget.Orientation;
@@ -30,7 +31,10 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
         [nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
         [nameof(ITextStyle.Font)] = MapFont,
+        
+        [nameof(ISegmentedView.IsSelectionRequired)] = MapIsSelectionRequired,
     };
+
 
     public SegmentedViewHandler() : base(Mapper)
     {
@@ -49,8 +53,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         rg.Orientation = Orientation.Horizontal;
         rg.LayoutParameters = new (ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
         rg.SingleSelection = true;
-        rg.SelectionRequired = false;
-        
+
         //result in too large items
         //rg.MeasureWithLargestChildEnabled = true;
 
@@ -97,16 +100,16 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         
         var rg = (MaterialButtonToggleGroup)sender!;
 
-        if (rg.CheckedButtonId != -1)
+        var buttonIndex = -1;
+        if (rg.CheckedButtonId >= 0)
         {
-            var id = rg.CheckedButtonId;
-            var button = rg.FindViewById(id);
-            var i = rg.IndexOfChild(button);
-
-            //Should trigger MapSelectedSegment and switch the selected rg
-            if (VirtualView.SelectedIndex != i)
-                VirtualView.SetSelectedIndex(i);
+            var button = rg.FindViewById(rg.CheckedButtonId);
+            buttonIndex = rg.IndexOfChild(button);
         }
+
+        //Will trigger MapSelectedSegment and switch the selected button
+        if (VirtualView.SelectedIndex != buttonIndex)
+            VirtualView.SetSelectedIndex(buttonIndex);
     }
 
     static void MapChildren(SegmentedViewHandler handler, ISegmentedView virtualView)
@@ -167,7 +170,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         rb.Enabled = virtualView.IsEnabled;
         
         var fontManager = handler.Services.GetRequiredService<IFontManager>()!;
-        rb.UpdateFont(control, fontManager);
+        //rb.UpdateFont(control, fontManager);
         
         var padding = handler.Context.ToPixels(control.ItemPadding);
         rb.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
@@ -175,6 +178,15 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     
     static void MapSelectedIndex(SegmentedViewHandler handler, ISegmentedView control)
     {
+        if (control.IsSelectionRequired && control.SelectedIndex < 0 || control.SelectedIndex >= control.Children.Count)
+        {
+            if (control.Children.Count > 0)
+            {
+                control.SetSelectedIndex(0);
+                ((MaterialButton)handler.PlatformView.GetChildAt(0)!).Checked = true;
+            }
+        }
+        
         var button = (MaterialButton?)handler.PlatformView.GetChildAt(control.SelectedIndex);
         
         handler.disableButtonNotifications = true;
@@ -197,6 +209,11 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         handler.selectedButton = button;
     }
 
+
+
+    static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control) 
+        => DoForAllChildren(handler, v => SetTextColor(v, control));
+
     static void SetTextColor(MaterialButton rb, ISegmentedView virtualView)
     {
         rb.ForegroundTintList = new (
@@ -211,10 +228,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
                 virtualView.TextColor.ToPlatform(),
             ]);
     }
-
-    static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control) 
-        => DoForAllChildren(handler, v => SetTextColor(v, control));
-
+    
     // static void MapBorderColor(SegmentedControlHandler handler, ISegmentedControl control)
     // {
     //     handler.PlatformView.bot
@@ -230,7 +244,13 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     static void MapFont(SegmentedViewHandler handler, ITextStyle control)
     {
         var fontManager = handler.Services.GetRequiredService<IFontManager>()!;
-        DoForAllChildren(handler, v => v.UpdateFont(control, fontManager));
+        //DoForAllChildren(handler, v => v.UpdateFont(control, fontManager));
+    }
+    
+    private static void MapIsSelectionRequired(SegmentedViewHandler handler, ISegmentedView control)
+    {
+        handler.PlatformView.SelectionRequired = control.IsSelectionRequired;
+        MapSelectedIndex(handler, control);
     }
     
     static void MapItemPadding(SegmentedViewHandler handler, ISegmentedView control)

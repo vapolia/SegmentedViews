@@ -14,6 +14,7 @@ public interface ISegmentedView : IView, ITextStyle
 
     public int SelectedIndex { get; }
     internal void SetSelectedIndex(int i);
+    public bool IsSelectionRequired { get; }
     
     internal string? TextPropertyName { get; }
     internal IValueConverter? TextConverter { get; }

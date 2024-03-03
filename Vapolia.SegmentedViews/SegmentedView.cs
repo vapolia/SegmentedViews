@@ -80,6 +80,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(SegmentedView), null, BindingMode.TwoWay);
   public static readonly BindableProperty SelectionChangedCommandProperty = BindableProperty.Create(nameof(SelectionChangedCommand), typeof(ICommand), typeof(SegmentedView));
   public static readonly BindableProperty SelectionChangedCommandParameterProperty = BindableProperty.Create(nameof(SelectionChangedCommandParameter), typeof(object), typeof(SegmentedView));
+  public static readonly BindableProperty IsSelectionRequiredProperty = BindableProperty.Create(nameof(IsSelectionRequired), typeof(bool), typeof(SegmentedView), true);
 
   public static readonly BindableProperty WidthDefinitionsProperty = BindableProperty.Create(nameof(WidthDefinitions), typeof(WidthDefinitionCollection), typeof(SegmentedView));
   public static readonly BindableProperty ItemsDefaultWidthProperty = BindableProperty.Create(nameof(ItemsDefaultWidth), typeof(GridLength), typeof(SegmentedView), GridLength.Auto);
@@ -182,7 +183,11 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   /// </summary>
   public ICommand? SelectionChangedCommand { get => (ICommand?)GetValue(SelectionChangedCommandProperty); set => SetValue(SelectionChangedCommandProperty, value); }
   public object? SelectionChangedCommandParameter { get => GetValue(SelectionChangedCommandParameterProperty); set => SetValue(SelectionChangedCommandParameterProperty, value); }
-
+  /// <summary>
+  /// If false, tapping a selected item unselects it
+  /// </summary>
+  public bool IsSelectionRequired { get => (bool)GetValue(IsSelectionRequiredProperty); set => SetValue(IsSelectionRequiredProperty, value); }
+  
   /// <summary>
   /// Used only with ItemsSource to set the Width of each item
   /// </summary>

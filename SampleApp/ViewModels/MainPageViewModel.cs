@@ -5,7 +5,7 @@ namespace SampleApp.ViewModels;
 
 public class MainPageViewModel
 {
-    public object? SegmentSelectedItem { get; set; }
+    public int SegmentSelectedIndex { get; set; }
     public ICommand SegmentSelectionChangedCommand { get; }
     public ICommand GoAdvancedDemoPageCommand { get; }
 
@@ -13,7 +13,7 @@ public class MainPageViewModel
     {
         SegmentSelectionChangedCommand = new Command(() =>
         {
-            var selectedItem = SegmentSelectedItem;
+            var selectedItem = SegmentSelectedIndex;
             //...
         });
 

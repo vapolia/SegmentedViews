@@ -19,7 +19,7 @@
             TintColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}" 
             DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
-            SelectedItem="{Binding SegmentSelectedItem}"
+            SelectedIndex="{Binding SegmentSelectedIndex}"
             ItemPadding="10,5"
             ItemsDefaultWidth="*">
             

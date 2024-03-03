@@ -24,6 +24,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
         [nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
         [nameof(ITextStyle.Font)] = MapFont,
+        
+        [nameof(ISegmentedView.IsSelectionRequired)] = MapIsSelectionRequired,
     };    
 
     public SegmentedViewHandler() : base(Mapper)
@@ -166,5 +168,16 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         //TODO: Make writable
         //titleTextAttributes.Font = uiFont;
         //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+    }
+    
+        
+    private static void MapIsSelectionRequired(SegmentedViewHandler handler, ISegmentedView control)
+    {
+        // handler.PlatformView.SelectionRequired = control.IsSelectionRequired;
+        // if (control.IsSelectionRequired && control.SelectedIndex < 0 && control.Children.Count > 0)
+        // {
+        //     control.SetSelectedIndex(0);
+        //     ((MaterialButton)handler.PlatformView.GetChildAt(0)!).Checked = true;
+        // }
     }
 }
