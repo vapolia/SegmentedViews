@@ -6,17 +6,17 @@
     xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"
     x:DataType="viewModels:MainPageViewModel"
     Title="Basic Demo"
-    BackgroundColor="Wheat"
+    BackgroundColor="White"
     > 
 
     <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
         
         <segmented:SegmentedView  
-            x:Name="TheSegmentView" BackgroundColor="Yellow"
+            x:Name="TheSegmentView" 
             HorizontalOptions="Fill" IsEnabled="True"
-            SelectedTextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
+            SelectedTextColor="{AppThemeBinding Light={StaticResource TextDark}, Dark={StaticResource TextLight}}" 
             TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" 
-            TintColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}" 
+            TintColor="{AppThemeBinding Light={StaticResource Yellow300Accent}, Dark={StaticResource Yellow100Accent}}" 
             DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedIndex="{Binding SegmentSelectedIndex}"

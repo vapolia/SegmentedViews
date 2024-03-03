@@ -125,8 +125,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         {
             var rb = new MaterialButton(handler.Context, null, Resource.Attribute.materialButtonOutlinedStyle);
             
-            rb.Text = segment.GetText(virtualView);
             SetTextColor(rb, virtualView);
+            rb.Text = segment.GetText(virtualView);
 
             var width = widths[i];
             
@@ -213,18 +213,18 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
 
 
     static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control) 
-        => DoForAllChildren(handler, v => SetTextColor(v, control));
+        => DoForAllChildren(handler, button => SetTextColor(button, control));
 
-    static void SetTextColor(MaterialButton rb, ISegmentedView virtualView)
+    static void SetTextColor(MaterialButton button, ISegmentedView virtualView)
     {
-        rb.ForegroundTintList = new (
+        button.ForegroundTintList = new (
             [
                 [-global::Android.Resource.Attribute.StateEnabled],
                 [global::Android.Resource.Attribute.StateChecked],            
                 [global::Android.Resource.Attribute.StateEnabled],
             ], 
             [
-                virtualView.DisabledColor.ToPlatform(),
+                virtualView.TextColor.ToPlatform(), //not DisabledColor otherwise text color = background color and text is not visible
                 virtualView.SelectedTextColor.ToPlatform(),
                 virtualView.TextColor.ToPlatform(),
             ]);

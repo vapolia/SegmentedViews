@@ -5,7 +5,7 @@
              x:Class="SampleApp.Views.DynamicItemsPage"
              x:DataType="viewModels:DynamicItemsPageViewModel"
              Title="Advanced demo"
-             BackgroundColor="Wheat"
+             BackgroundColor="White"
              >
     
     <ContentPage.Resources>
