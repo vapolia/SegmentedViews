@@ -95,9 +95,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
 
     static void MapTintColor(SegmentedViewHandler handler, ISegmentedView control)
     {
-        var color = (control.IsEnabled ? control.TintColor : control.DisabledColor).ToPlatform();
-        handler.PlatformView.TintColor = color;
-        handler.PlatformView.SelectedSegmentTintColor = color;
+        handler.PlatformView.TintColor = (control.IsEnabled ? control.TintColor : control.DisabledColor).ToPlatform();
+        handler.PlatformView.SelectedSegmentTintColor = (control.IsEnabled ? control.TintColor : control.DisabledColor).ToPlatform();
     }
 
     static void MapSelectedIndex(SegmentedViewHandler handler, ISegmentedView control) 
@@ -126,13 +125,13 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         => handler.PlatformView.BackgroundColor = control.BackgroundColor.ToPlatform();
 
     static void MapDisabledColor(SegmentedViewHandler handler, ISegmentedView control) 
-        => SetTextColor(handler.PlatformView, control.TextColor, UIControlState.Disabled);
+        => SetTextColor(handler.PlatformView, control.TextColor, UIControlState.Disabled); //Don't use disabled color otherwise the text is invisible
 
     static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control) 
         => SetTextColor(handler.PlatformView, control.TextColor, UIControlState.Normal);
 
     static void MapSelectedTextColor(SegmentedViewHandler handler, ISegmentedView control) 
-        => SetTextColor(handler.PlatformView, control.TextColor, UIControlState.Selected);
+        => SetTextColor(handler.PlatformView, control.SelectedTextColor, UIControlState.Selected);
 
     static void SetTextColor(UISegmentedControl control, Color color, UIControlState state)
     {

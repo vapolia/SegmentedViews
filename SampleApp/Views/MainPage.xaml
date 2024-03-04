@@ -31,9 +31,9 @@
         
         <segmented:SegmentedView  
             x:Name="TheSegmentView" 
-            Style="{StaticResource SegmentedViewMaterial2}"
+            Style="{StaticResource SegmentedViewMaterial3}"
             HorizontalOptions="Fill" 
-            IsEnabled="True"
+            IsEnabled="{Binding IsChecked,Source={x:Reference EnabledCheckBox}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedIndex="{Binding SegmentSelectedIndex}"
             ItemPadding="10,5"
@@ -60,6 +60,11 @@
             <Entry x:Name="TheEntry" Placeholder="Text of last tab" Text="Final" />
         </HorizontalStackLayout>
         
+        <HorizontalStackLayout Spacing="5">
+            <Label Text="Enabled:" VerticalOptions="Center" />
+            <CheckBox x:Name="EnabledCheckBox" IsChecked="True" />
+        </HorizontalStackLayout>
+   
         <Button Text="Open advanced demo" Command="{Binding GoAdvancedDemoPageCommand}" />
         
     </VerticalStackLayout>
