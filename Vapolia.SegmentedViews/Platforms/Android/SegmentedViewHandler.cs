@@ -170,7 +170,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         rb.StrokeColor = handler.BorderColor;
         rb.Enabled = virtualView.IsEnabled;
         
-        var fontManager = handler.Services.GetRequiredService<IFontManager>()!;
+        var fontManager = handler.Services?.GetRequiredService<IFontManager>()!;
         rb.UpdateFont(control, fontManager);
         
         var padding = handler.Context.ToPixels(control.ItemPadding);
@@ -264,7 +264,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
 
     static void MapFont(SegmentedViewHandler handler, ITextStyle control)
     {
-        var fontManager = handler.Services.GetRequiredService<IFontManager>()!;
+        var fontManager = handler.Services?.GetRequiredService<IFontManager>()!;
         DoForAllChildren(handler, v => v.UpdateFont(control, fontManager));
     }
     

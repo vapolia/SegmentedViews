@@ -19,7 +19,7 @@
         <ApplicationTitle>Segments</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>segments.vapolia.eu</ApplicationId>
+        <ApplicationId>eu.vapolia.segments</ApplicationId>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

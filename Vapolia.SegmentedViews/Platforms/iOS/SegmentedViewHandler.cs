@@ -12,21 +12,19 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         [nameof(ISegmentedView.WidthDefinitions)] = MapChildren,
         [nameof(ISegmentedView.IsEnabled)] = MapIsEnabled2,
         [nameof(ISegmentedView.SelectedIndex)] = MapSelectedIndex,
-        
+        [nameof(ISegmentedView.IsSelectionRequired)] = MapIsSelectionRequired,
+
         [nameof(ISegmentedView.ItemPadding)] = MapItemPadding,
+        [nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
+        [nameof(ITextStyle.Font)] = MapFont,
 
         [nameof(ISegmentedView.TintColor)] = MapTintColor,
         [nameof(ISegmentedView.SelectedTextColor)] = MapSelectedTextColor,
         [nameof(ITextStyle.TextColor)] = MapTextColor,
         [nameof(ISegmentedView.DisabledColor)] = MapDisabledColor,
-        [nameof(ISegmentedView.BorderColor)] = MapBorderColor,
         [nameof(ISegmentedView.BackgroundColor)] = MapBackgroundColor,
-        
+        [nameof(ISegmentedView.BorderColor)] = MapBorderColor,
         // [nameof(ISegmentedControl.BorderWidth)] = MapBorderWidth,
-        [nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
-        [nameof(ITextStyle.Font)] = MapFont,
-        
-        [nameof(ISegmentedView.IsSelectionRequired)] = MapIsSelectionRequired,
     };    
 
     public SegmentedViewHandler() : base(Mapper)
@@ -117,68 +115,48 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         MapTintColor(handler, control);
     }
 
-    static void MapSelectedTextColor(SegmentedViewHandler handler, ISegmentedView control) 
-    {
-        var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Selected);
-        //TODO: Make writable
-        //titleTextAttributes.ForegroundColor = control.SelectedTextColor.ToPlatform();
-        //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
-    }
-
-    static void MapDisabledColor(SegmentedViewHandler handler, ISegmentedView control) 
-    {
-        var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Disabled);
-        //TODO: Make writable
-        //titleTextAttributes.ForegroundColor = control.DisabledColor.ToPlatform();
-        //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
-    }
-
     static void MapBorderColor(SegmentedViewHandler handler, ISegmentedView control) 
     {
-        //todo
+        handler.PlatformView.Layer.BorderColor = control.BorderColor.ToPlatform().CGColor;
     }
 
     static void MapBackgroundColor(SegmentedViewHandler handler, ISegmentedView control) 
-    {
-        //todo
-    }
+        => handler.PlatformView.BackgroundColor = control.BackgroundColor.ToPlatform();
 
-    static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control)
+    static void MapDisabledColor(SegmentedViewHandler handler, ISegmentedView control) 
+        => SetTextColor(handler.PlatformView, control.TextColor, UIControlState.Disabled);
+
+    static void MapTextColor(SegmentedViewHandler handler, ISegmentedView control) 
+        => SetTextColor(handler.PlatformView, control.TextColor, UIControlState.Normal);
+
+    static void MapSelectedTextColor(SegmentedViewHandler handler, ISegmentedView control) 
+        => SetTextColor(handler.PlatformView, control.TextColor, UIControlState.Selected);
+
+    static void SetTextColor(UISegmentedControl control, Color color, UIControlState state)
     {
-        var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Normal);
-        //TODO: Make writable
-        //titleTextAttributes.ForegroundColor = control.TextColor.ToPlatform();
-        //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+        var titleTextAttributes = new UIStringAttributes { ForegroundColor = color.ToPlatform() };
+        control.SetTitleTextAttributes(titleTextAttributes, state);
     }
     
     static void MapCharacterSpacing(SegmentedViewHandler handler, ITextStyle control)
     {
-        //TODO: Make writable
-
-        // var kerningAdjustment = control.CharacterSpacing == 0 ? null : (float?)control.CharacterSpacing;
-        //
-        // var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Normal);
-        // titleTextAttributes.KerningAdjustment = kerningAdjustment;
-        // handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
-        //
-        // titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Disabled);
-        // titleTextAttributes.KerningAdjustment = kerningAdjustment;
-        // handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
-        //
-        // titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Selected);
-        // titleTextAttributes.KerningAdjustment = kerningAdjustment;
-        // handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
+        var kerningAdjustment = control.CharacterSpacing == 0 ? null : (float?)control.CharacterSpacing;
+        var titleTextAttributes = new UIStringAttributes { KerningAdjustment = kerningAdjustment };
+        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
+        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
     }
 
     static void MapFont(SegmentedViewHandler handler, ITextStyle control)
     {
-        var fontManager = handler.Services.GetRequiredService<IFontManager>();
-        var uiFont = fontManager.GetFont(control.Font, UIFont.ButtonFontSize);
+        var fontManager = handler.Services?.GetRequiredService<IFontManager>();
+        if (fontManager == null)
+            return;
         
-        var titleTextAttributes = handler.PlatformView.GetTitleTextAttributes(UIControlState.Normal);
-        //TODO: Make writable
-        //titleTextAttributes.Font = uiFont;
-        //handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+        var uiFont = fontManager.GetFont(control.Font, UIFont.ButtonFontSize);
+
+        var titleTextAttributes = new UIStringAttributes { Font = uiFont };
+        handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
     }
     
         

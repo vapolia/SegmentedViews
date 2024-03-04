@@ -23,7 +23,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(SegmentedView), Colors.White);
   public static readonly BindableProperty DisabledColorProperty = BindableProperty.Create(nameof(DisabledColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
   public new static readonly BindableProperty BackgroundColorProperty = BindableProperty.Create(nameof(BackgroundColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
-  public new static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
+  public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
 
 #region Font
   public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(IFontElement), default(string), propertyChanged: OnFontFamilyChanged);
@@ -90,7 +90,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   // public double BorderWidth { get => (double)GetValue(BorderWidthProperty); set => SetValue(BorderWidthProperty, value); }
 
   public new Color BackgroundColor { get => (Color?)GetValue(BackgroundColorProperty) ?? (Color)BackgroundColorProperty.DefaultValue; set => SetValue(BackgroundColorProperty, value); }
-  public new Color BorderColor { get => (Color?)GetValue(BorderColorProperty) ?? (Color)BorderColorProperty.DefaultValue; set => SetValue(BorderColorProperty, value); }
+  public Color BorderColor { get => (Color?)GetValue(BorderColorProperty) ?? (Color)BorderColorProperty.DefaultValue; set => SetValue(BorderColorProperty, value); }
   
   #region Font
   Microsoft.Maui.Font ITextStyle.Font => this.ToFont();
