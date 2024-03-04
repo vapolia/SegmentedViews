@@ -72,7 +72,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         {
             var segment = virtualView.Children[i];
             var width = widths[i];
-            segmentControl.InsertSegment(segment.GetText(virtualView), i, true);
+            segmentControl.InsertSegment(segment.GetText(virtualView), i, false);
 
             segmentControl.SetEnabled(true, i);
             
@@ -89,7 +89,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
                     segmentControl.SetWidth((nfloat)width.Value, i);
             }
         }
-
+        
         MapSelectedIndex(handler, virtualView);
     }
 
@@ -106,7 +106,9 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
     static void MapItemPadding(SegmentedViewHandler handler, ISegmentedView control)
     {
         var padding = control.ItemPadding;
-        handler.PlatformView.SetContentPositionAdjustment(new ((nfloat)padding.Left, (nfloat)padding.Top), UISegmentedControlSegment.Any, UIBarMetrics.Default);
+        // handler.PlatformView.SetContentPositionAdjustment(new ((nfloat)padding.Left, (nfloat)padding.Top), UISegmentedControlSegment.Any, UIBarMetrics.Default);
+        //TODO
+        //See https://gist.github.com/nubbel/f675113429b5c7429252
     }
     
     static void MapIsEnabled2(SegmentedViewHandler handler, ISegmentedView control)
@@ -143,7 +145,9 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         var kerningAdjustment = control.CharacterSpacing == 0 ? null : (float?)control.CharacterSpacing;
         var titleTextAttributes = new UIStringAttributes { KerningAdjustment = kerningAdjustment };
         handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
+        titleTextAttributes = new UIStringAttributes { KerningAdjustment = kerningAdjustment };
         handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
+        titleTextAttributes = new UIStringAttributes { KerningAdjustment = kerningAdjustment };
         handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
     }
 
