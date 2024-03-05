@@ -18,7 +18,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(SegmentedView), propertyChanged: (bindable, value, newValue) => ((SegmentedView)bindable).OnItemsSourceChanged((IEnumerable?)value, (IEnumerable?)newValue));
   public static readonly BindableProperty TextPropertyNameProperty = BindableProperty.Create(nameof(TextPropertyName), typeof(string), typeof(SegmentedView));
   public static readonly BindableProperty TextConverterProperty = BindableProperty.Create(nameof(TextConverter), typeof(IValueConverter), typeof(SegmentedView));
-  public static readonly BindableProperty TintColorProperty = BindableProperty.Create(nameof(TintColor), typeof(Color), typeof(SegmentedView), Colors.Blue);
+  public static readonly BindableProperty SelectedBackgroundColorProperty = BindableProperty.Create(nameof(SelectedBackgroundColor), typeof(Color), typeof(SegmentedView), Colors.Blue);
   public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(SegmentedView), Colors.Black);
   public static readonly BindableProperty SelectedTextColorProperty = BindableProperty.Create(nameof(SelectedTextColor), typeof(Color), typeof(SegmentedView), Colors.White);
   public static readonly BindableProperty DisabledColorProperty = BindableProperty.Create(nameof(DisabledColor), typeof(Color), typeof(SegmentedView), Colors.LightGray);
@@ -71,9 +71,9 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   public IValueConverter? TextConverter { get => (IValueConverter?)GetValue(TextConverterProperty); set => SetValue(TextConverterProperty, value); }
 
   /// <summary>
-  /// Color of both the border of the container, and the background of selected segments
+  /// Color of the background of selected segments
   /// </summary>
-  public Color TintColor { get => (Color?)GetValue(TintColorProperty) ?? (Color)TintColorProperty.DefaultValue; set => SetValue(TintColorProperty, value); }
+  public Color SelectedBackgroundColor { get => (Color?)GetValue(SelectedBackgroundColorProperty) ?? (Color)SelectedBackgroundColorProperty.DefaultValue; set => SetValue(SelectedBackgroundColorProperty, value); }
   /// <summary>
   /// Color of the text of unselected segments 
   /// </summary>
@@ -89,7 +89,13 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   // public Color BorderColor { get => (Color)GetValue(BorderColorProperty); set => SetValue(BorderColorProperty, value); }
   // public double BorderWidth { get => (double)GetValue(BorderWidthProperty); set => SetValue(BorderWidthProperty, value); }
 
+  /// <summary>
+  /// Color of the background of unselected segments
+  /// </summary>
   public new Color BackgroundColor { get => (Color?)GetValue(BackgroundColorProperty) ?? (Color)BackgroundColorProperty.DefaultValue; set => SetValue(BackgroundColorProperty, value); }
+  /// <summary>
+  /// Color of the border of the container
+  /// </summary>
   public Color BorderColor { get => (Color?)GetValue(BorderColorProperty) ?? (Color)BorderColorProperty.DefaultValue; set => SetValue(BorderColorProperty, value); }
   
   #region Font

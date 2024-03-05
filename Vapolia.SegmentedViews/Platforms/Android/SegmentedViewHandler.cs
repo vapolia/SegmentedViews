@@ -26,7 +26,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         [nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
         [nameof(ITextStyle.Font)] = MapFont,
         
-        [nameof(ISegmentedView.TintColor)] = ReconfigureRadioButtons,
+        [nameof(ISegmentedView.SelectedBackgroundColor)] = ReconfigureRadioButtons,
         [nameof(ISegmentedView.SelectedTextColor)] = MapTextColor,
         [nameof(ITextStyle.TextColor)] = MapTextColor,
         [nameof(ISegmentedView.DisabledColor)] = ReconfigureRadioButtons,
@@ -163,7 +163,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         ], 
         [
             virtualView.DisabledColor.ToPlatform(),
-            virtualView.TintColor.ToPlatform(),
+            virtualView.SelectedBackgroundColor.ToPlatform(),
             virtualView.BackgroundColor.ToPlatform(),
         ]);
 

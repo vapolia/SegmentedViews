@@ -17,7 +17,7 @@
             <Style x:Key="SegmentedViewMaterial3" TargetType="segmented:SegmentedView">
                 <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="SelectedTextColor" Value="DarkGreen"/>
-                <Setter Property="TintColor" Value="LightGreen"/>
+                <Setter Property="SelectedBackgroundColor" Value="LightGreen"/>
                 <Setter Property="BorderColor" Value="LightGray"/>
                 <Setter Property="BackgroundColor" Value="Transparent"/>
                 <Setter Property="DisabledColor" Value="#f0f0f0"/>
@@ -25,7 +25,7 @@
             <Style x:Key="SegmentedViewMaterial2" TargetType="segmented:SegmentedView">
                 <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="SelectedTextColor" Value="#8f36ea"/>
-                <Setter Property="TintColor" Value="#f5effd"/>
+                <Setter Property="SelectedBackgroundColor" Value="#f5effd"/>
                 <Setter Property="BorderColor" Value="LightGray"/>
                 <Setter Property="BackgroundColor" Value="Transparent"/>
                 <Setter Property="DisabledColor" Value="#f0f0f0"/>
@@ -62,7 +62,7 @@
             HorizontalOptions="Fill" IsEnabled="True"
             SelectedTextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"
             TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"
-            TintColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}"
+            SelectedBackgroundColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}"
             DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedItem="{Binding SegmentSelectedItem, Mode=OneWay}"

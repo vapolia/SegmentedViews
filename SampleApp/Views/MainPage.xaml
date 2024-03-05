@@ -11,10 +11,19 @@
 
     <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
         <View.Resources>
+            <!-- A couple of test styles -->
+            <Style x:Key="Pyrotechnic" TargetType="segmented:SegmentedView">
+                <Setter Property="TextColor" Value="BlueViolet"/>
+                <Setter Property="SelectedTextColor" Value="DarkGreen"/>
+                <Setter Property="SelectedBackgroundColor" Value="LightBlue"/>
+                <Setter Property="BorderColor" Value="Red"/>
+                <Setter Property="BackgroundColor" Value="Yellow"/>
+                <Setter Property="DisabledColor" Value="#f0f0f0"/>
+            </Style>
             <Style x:Key="SegmentedViewMaterial3" TargetType="segmented:SegmentedView">
                 <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="SelectedTextColor" Value="DarkGreen"/>
-                <Setter Property="TintColor" Value="LightGreen"/>
+                <Setter Property="SelectedBackgroundColor" Value="LightGreen"/>
                 <Setter Property="BorderColor" Value="LightGray"/>
                 <Setter Property="BackgroundColor" Value="Transparent"/>
                 <Setter Property="DisabledColor" Value="#f0f0f0"/>
@@ -22,21 +31,20 @@
             <Style x:Key="SegmentedViewMaterial2" TargetType="segmented:SegmentedView">
                 <Setter Property="TextColor" Value="Black"/>
                 <Setter Property="SelectedTextColor" Value="#8f36ea"/>
-                <Setter Property="TintColor" Value="#f5effd"/>
+                <Setter Property="SelectedBackgroundColor" Value="#f5effd"/>
                 <Setter Property="BorderColor" Value="LightGray"/>
                 <Setter Property="BackgroundColor" Value="Transparent"/>
                 <Setter Property="DisabledColor" Value="#f0f0f0"/>
             </Style>
         </View.Resources>
         
-        <segmented:SegmentedView  
-            x:Name="TheSegmentView" 
-            Style="{StaticResource SegmentedViewMaterial3}"
+        <segmented:SegmentedView  x:Name="TheSegmentView" 
+            Style="{StaticResource Pyrotechnic}"
             HorizontalOptions="Fill" 
             IsEnabled="{Binding IsChecked,Source={x:Reference EnabledCheckBox}}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedIndex="{Binding SegmentSelectedIndex}"
-            ItemPadding="10,5"
+            ItemPadding="10,0"
             ItemsDefaultWidth="*">
             
             <segmented:Segment Item="Tab1" />

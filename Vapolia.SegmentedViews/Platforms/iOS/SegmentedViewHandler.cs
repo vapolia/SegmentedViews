@@ -1,10 +1,61 @@
+using CoreGraphics;
+using Foundation;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
+using ObjCRuntime;
 using UIKit;
 
 namespace Vapolia.SegmentedViews.Platforms.Ios;
 
-internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedControl>
+internal class UISegmentedControlEx : UISegmentedControl
+{
+    private Thickness? paddingSize;
+
+    [Export("init")]
+    public UISegmentedControlEx() {}
+
+    [Export("initWithCoder:")]
+    public UISegmentedControlEx(NSCoder coder) : base(coder) {}
+    protected UISegmentedControlEx(NSObjectFlag t) : base(t) {}
+    protected internal UISegmentedControlEx(NativeHandle handle) : base(handle) {}
+
+    public Thickness? Padding
+    {
+        get => paddingSize;
+        set
+        {
+            paddingSize = value;
+            InvalidateIntrinsicContentSize();
+        }
+    }
+
+    /// <summary>
+    /// Maui does not use constraint positioning (ie: intrinsicContentSize)
+    /// </summary>
+    public override CGSize SizeThatFits(CGSize sizeToFit)
+    {
+        var size = base.SizeThatFits(sizeToFit);
+        
+        if (Padding is { IsEmpty: false } padding)
+        {
+            //On iOS there is a default minimum padding of 10.
+            //To match Android, lets subtracts 10.
+            var width = padding.HorizontalThickness - 10;
+            
+            size.Width += (nfloat)(2 * width * (NumberOfSegments + 1));
+            size.Height += (nfloat)(padding.VerticalThickness * 2);
+
+            if (size.Width > sizeToFit.Width)
+                size.Width = sizeToFit.Width;
+            if (size.Height > sizeToFit.Height)
+                size.Height = sizeToFit.Height;
+        }
+
+        return size;
+    }
+}
+
+internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedControlEx>
 {
     public static IPropertyMapper<ISegmentedView, SegmentedViewHandler> Mapper = new PropertyMapper<ISegmentedView, SegmentedViewHandler>(ViewMapper)
     {
@@ -18,7 +69,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         [nameof(ITextStyle.CharacterSpacing)] = MapCharacterSpacing,
         [nameof(ITextStyle.Font)] = MapFont,
 
-        [nameof(ISegmentedView.TintColor)] = MapTintColor,
+        [nameof(ISegmentedView.SelectedBackgroundColor)] = MapTintColor,
         [nameof(ISegmentedView.SelectedTextColor)] = MapSelectedTextColor,
         [nameof(ITextStyle.TextColor)] = MapTextColor,
         [nameof(ISegmentedView.DisabledColor)] = MapDisabledColor,
@@ -35,17 +86,17 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
     {
     }
 
-    protected override UISegmentedControl CreatePlatformView() => new();
+    protected override UISegmentedControlEx CreatePlatformView() => new();
 
     public override bool NeedsContainer => false;
 
-    protected override void ConnectHandler(UISegmentedControl platformView)
+    protected override void ConnectHandler(UISegmentedControlEx platformView)
     {
         base.ConnectHandler(platformView);
         platformView.ValueChanged += PlatformView_ValueChanged;
     }
 
-    protected override void DisconnectHandler(UISegmentedControl platformView)
+    protected override void DisconnectHandler(UISegmentedControlEx platformView)
     {
         platformView.ValueChanged -= PlatformView_ValueChanged;
         base.DisconnectHandler(platformView);
@@ -95,8 +146,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
 
     static void MapTintColor(SegmentedViewHandler handler, ISegmentedView control)
     {
-        handler.PlatformView.TintColor = (control.IsEnabled ? control.TintColor : control.DisabledColor).ToPlatform();
-        handler.PlatformView.SelectedSegmentTintColor = (control.IsEnabled ? control.TintColor : control.DisabledColor).ToPlatform();
+        handler.PlatformView.TintColor = (control.IsEnabled ? control.SelectedBackgroundColor : control.DisabledColor).ToPlatform();
+        handler.PlatformView.SelectedSegmentTintColor = (control.IsEnabled ? control.SelectedBackgroundColor : control.DisabledColor).ToPlatform();
     }
 
     static void MapSelectedIndex(SegmentedViewHandler handler, ISegmentedView control) 
@@ -104,10 +155,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
 
     static void MapItemPadding(SegmentedViewHandler handler, ISegmentedView control)
     {
-        var padding = control.ItemPadding;
+        handler.PlatformView.Padding = control.ItemPadding;
         // handler.PlatformView.SetContentPositionAdjustment(new ((nfloat)padding.Left, (nfloat)padding.Top), UISegmentedControlSegment.Any, UIBarMetrics.Default);
-        //TODO
-        //See https://gist.github.com/nubbel/f675113429b5c7429252
     }
     
     static void MapIsEnabled2(SegmentedViewHandler handler, ISegmentedView control)
@@ -133,7 +182,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
     static void MapSelectedTextColor(SegmentedViewHandler handler, ISegmentedView control) 
         => SetTextColor(handler.PlatformView, control.SelectedTextColor, UIControlState.Selected);
 
-    static void SetTextColor(UISegmentedControl control, Color color, UIControlState state)
+    static void SetTextColor(UISegmentedControlEx control, Color color, UIControlState state)
     {
         var titleTextAttributes = new UIStringAttributes { ForegroundColor = color.ToPlatform() };
         control.SetTitleTextAttributes(titleTextAttributes, state);
