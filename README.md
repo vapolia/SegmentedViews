@@ -50,7 +50,7 @@ Add a static segment view:
 <segmented:SegmentedView  
     x:Name="TheSegmentView"
     SelectedIndex="0"
-    SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+    SelectedTextColor="White" TextColor="Black" SelectedBackgroundColor="Blue" DisabledColor="LightGray"
     SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
     SelectedItem="{Binding SegmentSelectedItem}">
     
@@ -70,7 +70,7 @@ Or a dynamic segment view:
             TextPropertyName="LastName"
             SelectedIndex="0"
             SelectedItem="{Binding SegmentSelectedItem}"
-            SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+            SelectedTextColor="White" TextColor="Black" SelectedBackgroundColor="Blue" DisabledColor="LightGray"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}" />
 ```
 
@@ -83,7 +83,7 @@ The width of a segment can be set in the following 3 ways:
 <segmented:SegmentedView  
     x:Name="TheSegmentView"
     SelectedIndex="0"
-    SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+    SelectedTextColor="White" TextColor="Black" SelectedBackgroundColor="Blue" DisabledColor="LightGray"
     SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
     SelectedItem="{Binding SegmentSelectedItem}"
     ItemsDefaultWidth="150" />
@@ -94,7 +94,7 @@ The width of a segment can be set in the following 3 ways:
 <segmented:SegmentedView  
     x:Name="TheSegmentView"
     SelectedIndex="0"
-    SelectedTextColor="White" TextColor="Black" TintColor="Blue" DisabledColor="LightGray"
+    SelectedTextColor="White" TextColor="Black" SelectedBackgroundColor="Blue" DisabledColor="LightGray"
     SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
     SelectedItem="{Binding SegmentSelectedItem}"
     ItemsWidthDefinitions="150,Auto,*,2*">
