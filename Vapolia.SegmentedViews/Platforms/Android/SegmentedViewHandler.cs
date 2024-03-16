@@ -2,7 +2,6 @@ using Android.Content.Res;
 using Android.Views;
 using Android.Widget;
 using Google.Android.Material.Button;
-using Google.Android.Material.Internal;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using Orientation = Android.Widget.Orientation;
@@ -13,6 +12,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
 {
     MaterialButton? selectedButton;
     bool disableButtonNotifications;
+    ColorStateList? BorderColor;
 
     public static IPropertyMapper<ISegmentedView, SegmentedViewHandler> Mapper = new PropertyMapper<ISegmentedView, SegmentedViewHandler>(ViewMapper)
     {
@@ -60,10 +60,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         //OK. It takes whole space
         //rg.BackgroundTintList = ColorStateList.ValueOf(Color.Red);
         
-        //Does nothing
-        //rg.SetForegroundGravity(GravityFlags.FillHorizontal | GravityFlags.CenterVertical);
-        //rg.SetGravity(GravityFlags.FillHorizontal | GravityFlags.CenterVertical);
-
         return rg;
     }
 
@@ -99,10 +95,10 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         if (frame.Width <= 0 || frame.Height <= 0 || platformView == null! || virtualView == null!)
             return;
 
+        // If the Width and Height are both explicit, then it has already done MeasureSpecMode.Exactly in both dimensions; no need to do it again
+        // Otherwise it needs a second measurement pass so TextView can properly handle alignments
         var needsExactMeasure = (virtualView.VerticalLayoutAlignment == Microsoft.Maui.Primitives.LayoutAlignment.Fill
                                  || virtualView.HorizontalLayoutAlignment == Microsoft.Maui.Primitives.LayoutAlignment.Fill)
-                                // If the Width and Height are both explicit, then we've already done MeasureSpecMode.Exactly in both dimensions; no need to do it again
-                                // Otherwise we're going to need a second measurement pass so TextView can properly handle alignments
                                 && virtualView is not { Width: >= 0, Height: >= 0 };
         
         // Depending on our layout situation, the TextView may need an additional measurement pass at the final size
@@ -136,8 +132,8 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
 
     static void MapChildren(SegmentedViewHandler handler, ISegmentedView virtualView)
     {
-        var rg = handler.PlatformView;
-        rg.RemoveAllViews();
+        var segmentContainer = handler.PlatformView;
+        segmentContainer.RemoveAllViews();
         handler.selectedButton = null;
 
         var widths = virtualView.GetWidths();
@@ -145,57 +141,52 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         var i = 0;
         foreach (var segment in virtualView.Children)
         {
-            var rb = new MaterialButton(handler.Context, null, Resource.Attribute.materialButtonOutlinedStyle);
+            var segmentButton = new MaterialButton(handler.Context, null, Resource.Attribute.materialButtonOutlinedStyle);
             
-            SetTextColor(rb, virtualView);
-            rb.Text = segment.GetText(virtualView);
+            SetTextColor(segmentButton, virtualView);
+            segmentButton.Text = segment.GetText(virtualView);
 
             var width = widths[i];
             
             if(width.IsStar)
-                rb.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, (float)width.Value);
+                segmentButton.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, (float)width.Value);
             else if(width.IsAuto)
-                rb.LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.MatchParent);
+                segmentButton.LayoutParameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.MatchParent);
             else if(width.IsAbsolute)
-                rb.LayoutParameters = new LinearLayout.LayoutParams((int)handler.Context.ToPixels(width.Value), ViewGroup.LayoutParams.MatchParent);
+                segmentButton.LayoutParameters = new LinearLayout.LayoutParams((int)handler.Context.ToPixels(width.Value), ViewGroup.LayoutParams.MatchParent);
             else //relative, what does that mean ?
-                rb.LayoutParameters = new LinearLayout.LayoutParams((int)handler.Context.ToPixels(width.Value), ViewGroup.LayoutParams.MatchParent);
+                segmentButton.LayoutParameters = new LinearLayout.LayoutParams((int)handler.Context.ToPixels(width.Value), ViewGroup.LayoutParams.MatchParent);
 
-            ConfigureRadioButton(handler, virtualView, rb);
-            rg.AddView(rb);
+            ConfigureButton(segmentButton, handler, virtualView);
+            segmentContainer.AddView(segmentButton);
             i++;
         }
-
-        MapSelectedIndex(handler, virtualView);
         
-        //rg.ForceLayout();
-        //rg.RequestLayout();
-        //handler.VirtualView.InvalidateMeasure();
+        MapSelectedIndex(handler, virtualView);
     }
 
-    static void ConfigureRadioButton(SegmentedViewHandler handler, ISegmentedView control, MaterialButton rb)
+    static void ConfigureButton(MaterialButton button, SegmentedViewHandler handler, ISegmentedView control)
     {
-        var virtualView = handler.VirtualView;
-
-        rb.BackgroundTintList = new (
+        button.BackgroundTintList = new (
         [
             [-global::Android.Resource.Attribute.StateEnabled], //disabled
             [global::Android.Resource.Attribute.StateChecked],  // checked            
             [],  //default
         ], 
         [
-            virtualView.DisabledColor.ToPlatform(),
-            virtualView.SelectedBackgroundColor.ToPlatform(),
-            virtualView.BackgroundColor.ToPlatform(),
+            control.DisabledColor.ToPlatform(),
+            control.SelectedBackgroundColor.ToPlatform(),
+            control.BackgroundColor.ToPlatform(),
         ]);
 
-        rb.StrokeColor = handler.BorderColor;
-        rb.Enabled = virtualView.IsEnabled;
+        button.StrokeColor = handler.BorderColor;
+        button.Enabled = control.IsEnabled;
         
-        UpdateFont(rb, handler, control);
+        UpdateFont(button, handler, control);
+        button.UpdateCharacterSpacing(control);
         
         var padding = handler.Context.ToPixels(control.ItemPadding);
-        rb.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
+        button.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
     }
     
     static void MapSelectedIndex(SegmentedViewHandler handler, ISegmentedView control)
@@ -258,8 +249,6 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         
         button.SetTextColor(colors);
     }
-
-    private ColorStateList? BorderColor;
     
     static void MapBorderColor(SegmentedViewHandler handler, ISegmentedView virtualView)
     {
@@ -314,11 +303,11 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     static void MapIsEnabled2(SegmentedViewHandler handler, ISegmentedView control)
     {
         MapIsEnabled(handler, control);
-        DoForAllChildren(handler, v => ConfigureRadioButton(handler, control, v));
+        DoForAllChildren(handler, v => ConfigureButton(v, handler, control));
     }
 
-    static void ReconfigureRadioButtons(SegmentedViewHandler handler, ISegmentedView control) 
-        => DoForAllChildren(handler, v => ConfigureRadioButton(handler, control, v));
+    static void ReconfigureRadioButtons(SegmentedViewHandler handler, ISegmentedView control)
+        => DoForAllChildren(handler, v => ConfigureButton(v, handler, control));
 
     static void DoForAllChildren(SegmentedViewHandler handler, Action<MaterialButton> action)
     {
