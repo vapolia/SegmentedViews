@@ -85,13 +85,35 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         base.DisconnectHandler(platformView);
     }
 
-    // /// <summary>
-    // /// Invokes "IView.Frame" after calling PlatformView.Layout
-    // /// </summary>
-    // public override void PlatformArrange(Rect frame)
-    // {
-    //     base.PlatformArrange(frame);
-    // }
+    /// <summary>
+    /// Fix tabs won't use the full container's width
+    /// </summary>
+    /// <remarks>
+    /// Credits: yurkinh
+    /// </remarks>
+    public override void PlatformArrange(Rect frame)
+    {
+        var platformView = PlatformView;
+        var virtualView = VirtualView;
+
+        if (frame.Width <= 0 || frame.Height <= 0 || platformView == null! || virtualView == null!)
+            return;
+
+        var needsExactMeasure = (virtualView.VerticalLayoutAlignment == Microsoft.Maui.Primitives.LayoutAlignment.Fill
+                                 || virtualView.HorizontalLayoutAlignment == Microsoft.Maui.Primitives.LayoutAlignment.Fill)
+                                // If the Width and Height are both explicit, then we've already done MeasureSpecMode.Exactly in both dimensions; no need to do it again
+                                // Otherwise we're going to need a second measurement pass so TextView can properly handle alignments
+                                && virtualView is not { Width: >= 0, Height: >= 0 };
+        
+        // Depending on our layout situation, the TextView may need an additional measurement pass at the final size
+        // in order to properly handle any TextAlignment properties and some internal bookkeeping
+        if (needsExactMeasure)
+            platformView.Measure(MakeExact(frame.Width), MakeExact(frame.Height));
+        
+        base.PlatformArrange(frame);
+        
+        int MakeExact(double size) => MeasureSpecMode.Exactly.MakeMeasureSpec((int)platformView.Context.ToPixels(size));
+    }
 
     void PlatformView_CheckedChange(object? sender, MaterialButtonToggleGroup.ButtonCheckedEventArgs e)
     {
@@ -170,8 +192,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
         rb.StrokeColor = handler.BorderColor;
         rb.Enabled = virtualView.IsEnabled;
         
-        var fontManager = handler.Services?.GetRequiredService<IFontManager>()!;
-        rb.UpdateFont(control, fontManager);
+        UpdateFont(rb, handler, control);
         
         var padding = handler.Context.ToPixels(control.ItemPadding);
         rb.SetPadding((int)padding.Left, (int)padding.Top, (int)padding.Right, (int)padding.Bottom);
@@ -242,7 +263,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     
     static void MapBorderColor(SegmentedViewHandler handler, ISegmentedView virtualView)
     {
-        handler.BorderColor = new ColorStateList(
+        handler.BorderColor = new (
             [
                 [-global::Android.Resource.Attribute.StateEnabled],
                 [],
@@ -265,7 +286,13 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     static void MapFont(SegmentedViewHandler handler, ITextStyle control)
     {
         var fontManager = handler.Services?.GetRequiredService<IFontManager>()!;
-        DoForAllChildren(handler, v => v.UpdateFont(control, fontManager));
+        DoForAllChildren(handler, v => UpdateFont(v, handler, control, fontManager));
+    }
+
+    static void UpdateFont(MaterialButton button, SegmentedViewHandler handler, ITextStyle control, IFontManager? fontManager = null)
+    {
+        fontManager ??= handler.Services?.GetRequiredService<IFontManager>()!;
+        button.UpdateFont(control, fontManager);
     }
     
     private static void MapIsSelectionRequired(SegmentedViewHandler handler, ISegmentedView control)
