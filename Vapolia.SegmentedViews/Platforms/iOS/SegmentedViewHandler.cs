@@ -193,9 +193,9 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
         var kerningAdjustment = control.CharacterSpacing == 0 ? null : (float?)control.CharacterSpacing;
         var titleTextAttributes = new UIStringAttributes { KerningAdjustment = kerningAdjustment };
         handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Normal);
-        titleTextAttributes = new UIStringAttributes { KerningAdjustment = kerningAdjustment };
+        titleTextAttributes = new() { KerningAdjustment = kerningAdjustment };
         handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Disabled);
-        titleTextAttributes = new UIStringAttributes { KerningAdjustment = kerningAdjustment };
+        titleTextAttributes = new() { KerningAdjustment = kerningAdjustment };
         handler.PlatformView.SetTitleTextAttributes(titleTextAttributes, UIControlState.Selected);
     }
 
