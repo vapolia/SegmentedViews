@@ -76,7 +76,7 @@ Or a dynamic segment view:
 
 ## Width of segment items
 
-The width of a segment can be set in the following 3 ways:
+The width of a segment can be set in the following 3 ways, in reverse order of priority:
 
 * On the `ItemsDefaultWidth` property of `SegmentedView`
 ```xml
@@ -99,11 +99,10 @@ The width of a segment can be set in the following 3 ways:
     SelectedItem="{Binding SegmentSelectedItem}"
     ItemsWidthDefinitions="150,Auto,*,2*">
 ```
+This width follow the format of a Grid's ColumnsDefinition, so it should be straightforward to use.
 
 * Directly on the `Width` property of a `Segment`
 ```xml
 <segmented:Segment Item="Item1" Width="150" />
 <segmented:Segment Item="Item1" Width="Auto" />
 ```
-
-This width follow the format of a Grid's ColumnsDefinition, so it should be straightforward to use.
