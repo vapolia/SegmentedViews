@@ -50,6 +50,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Vapolia.SegmentedViews\Vapolia.SegmentedViews.csproj" />
+<!--      <ProjectReference Include="..\Vapolia.SegmentedViews\Vapolia.SegmentedViews.csproj" />-->
+        <PackageReference Include="Vapolia.SegmentedViews" Version="1.0.3" />
     </ItemGroup>
 </Project>

@@ -69,6 +69,20 @@
             SelectedIndex="{Binding SelectedIndex,Source={x:Reference TheSegmentView}}"
             ItemsDefaultWidth="Auto"
             />
+            
+            <segmented:SegmentedView
+                ItemsSource="{Binding Persons}"
+                TextConverter="{x:StaticResource PersonTextConverter}"
+                HorizontalOptions="End"
+                SelectedTextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"
+                TextColor="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}"
+                SelectedBackgroundColor="{AppThemeBinding Light={StaticResource Blue300Accent}, Dark={StaticResource Blue100Accent}}"
+                DisabledColor="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}"
+                SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
+                SelectedItem="{Binding SegmentSelectedItem, Mode=OneWay}"
+                SelectedIndex="{Binding SelectedIndex,Source={x:Reference TheSegmentView}}"
+                ItemsDefaultWidth="Auto"
+                />
 
         <Label Text="{Binding InfoText2}" />
         
