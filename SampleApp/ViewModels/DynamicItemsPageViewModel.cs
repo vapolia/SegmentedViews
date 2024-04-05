@@ -28,10 +28,17 @@ public class DynamicItemsPageViewModel : INotifyPropertyChanged
 {
     private string infoText = string.Empty;
     private string infoText2 = string.Empty;
+    private object? segmentSelectedItem;
     private int nextInt = 42;
 
-    public object? SegmentSelectedItem { get; set; }
+    public object? SegmentSelectedItem
+    {
+        get => segmentSelectedItem;
+        set { segmentSelectedItem = value; OnPropertyChanged(); }
+    }
+
     public ICommand SegmentSelectionChangedCommand { get; }
+    
     public string InfoText
     {
         get => infoText;
@@ -55,6 +62,13 @@ public class DynamicItemsPageViewModel : INotifyPropertyChanged
             new (1, "Johnny", "Halliday"),
             new (1, "Vanessa", "Paradis"),
             new (1, "Jose", "Garcia"),
+        });
+
+        //Delayed initialization
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            SegmentSelectedItem = Persons[1];
         });
         
         SegmentSelectionChangedCommand = new Command(() =>
