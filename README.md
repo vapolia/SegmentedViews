@@ -106,3 +106,9 @@ This width follow the format of a Grid's ColumnsDefinition, so it should be stra
 <segmented:Segment Item="Item1" Width="150" />
 <segmented:Segment Item="Item1" Width="Auto" />
 ```
+
+# IsSelectionRequired feature
+
+By default, the control requires a selected item. By setting `IsSelectionRequired` to `False`, it won't try to constraint the SelectedIndex between 0 and the number of segments. The visual result is no segment is selected.
+
+TLDR: set `IsSelectionRequired="False"` and `SelectedIndex="-1"` to visually see no selection.
