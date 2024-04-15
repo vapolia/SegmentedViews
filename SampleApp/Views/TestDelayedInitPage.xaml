@@ -1,0 +1,45 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:SampleApp.ViewModels"
+             xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"
+             x:Class="SampleApp.Views.TestDelayedInitPage"
+             x:DataType="viewModels:TestDelayedInitViewModel"
+             Title="Delayed Init Test"
+             BackgroundColor="White">
+    
+    
+    <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
+        <View.Resources>
+            <Style x:Key="SegmentedViewMaterial2" TargetType="segmented:SegmentedView">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="SelectedTextColor" Value="#8f36ea"/>
+                <Setter Property="SelectedBackgroundColor" Value="#f5effd"/>
+                <Setter Property="BorderColor" Value="LightGray"/>
+                <Setter Property="BackgroundColor" Value="Transparent"/>
+                <Setter Property="DisabledColor" Value="#f0f0f0"/>
+            </Style>
+        </View.Resources>
+        
+        <segmented:SegmentedView
+            x:Name="TheSegmentView"
+            ItemsSource="{Binding Persons}"
+            TextPropertyName="LastName"
+            SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
+            SelectedItem="{Binding SegmentSelectedItem}"
+            Style="{StaticResource SegmentedViewMaterial2}"
+            HorizontalOptions="Fill" IsEnabled="True" 
+            ItemPadding="10,3" 
+            WidthDefinitions="Auto,*,*"
+            />
+
+        
+        <HorizontalStackLayout Spacing="5">
+            <Label Text="Selected Segment : #" VerticalOptions="Center" />
+            <Label Text="{Binding SelectedIndex, Source={x:Reference TheSegmentView}, Mode=OneWay}" />
+        </HorizontalStackLayout>
+        <Label Text="{Binding InfoText}" />
+        
+    </VerticalStackLayout>
+    
+    
+</ContentPage>

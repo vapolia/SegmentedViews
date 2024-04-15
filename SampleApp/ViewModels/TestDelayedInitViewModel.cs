@@ -1,36 +1,16 @@
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using SampleApp.Views;
 
 namespace SampleApp.ViewModels;
 
-public record Person(int Id, string FirstName, string LastName);
-
-/// <summary>
-/// Sample value converter.
-/// You can also override ToString() on the Person class instead of using this converter.
-/// </summary>
-public class PersonTextConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        var person = (Person)value!;
-        return $"{person.FirstName} {person.LastName}";
-    }
-
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) 
-        => throw new NotSupportedException();
-}
-
-public class DynamicItemsPageViewModel : INotifyPropertyChanged
+public class TestDelayedInitViewModel : INotifyPropertyChanged
 {
     private string infoText = string.Empty;
     private string infoText2 = string.Empty;
     private object? segmentSelectedItem;
     private int nextInt = 42;
+    private List<Person> persons;
 
     public object? SegmentSelectedItem
     {
@@ -54,23 +34,40 @@ public class DynamicItemsPageViewModel : INotifyPropertyChanged
     public ICommand AddItemCommand { get; }
     public ICommand RemoveItemCommand { get; }
     public ICommand ClearCommand { get; }
-    public ICommand GoTestDelayedInitPageCommand { get; }
-    public ObservableCollection<Person> Persons { get; }
 
-    public DynamicItemsPageViewModel(INavigation navigation)
+    public List<Person> Persons
     {
-        Persons = new(new Person[]
+        get => persons;
+        private set
+        {
+            persons = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public TestDelayedInitViewModel()
+    {
+        //Testing:
+        //set selected item before the items are set
+        
+        var thePersons = new List<Person>
         {
             new (1, "Johnny", "Halliday"),
             new (2, "Vanessa", "Paradis"),
             new (3, "Jose", "Garcia"),
-        });
+        };
+        
+        SegmentSelectedItem = thePersons[1];
 
-        //Testing: set selected item after a delay
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            await Task.Delay(TimeSpan.FromSeconds(3));
-            SegmentSelectedItem = Persons[1];
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            Persons = thePersons;
+
+            if ((Person?)SegmentSelectedItem != thePersons[1])
+            {
+                Console.WriteLine("Issue with SegmentedView 🤔");
+            }
         });
         
         SegmentSelectionChangedCommand = new Command(() =>
@@ -80,7 +77,7 @@ public class DynamicItemsPageViewModel : INotifyPropertyChanged
 
         AddItemCommand = new Command(() =>
         {
-            Persons.Add(new(nextInt, "Any", $"One {nextInt++}"));
+            Persons.Add(new(999, "Any", $"One {nextInt++}"));
         });
 
         RemoveItemCommand = new Command(() =>
@@ -92,12 +89,6 @@ public class DynamicItemsPageViewModel : INotifyPropertyChanged
         ClearCommand = new Command(() =>
         {
             Persons.Clear();
-        });
-        
-        
-        GoTestDelayedInitPageCommand = new Command(() =>
-        {
-            navigation.PushAsync(new TestDelayedInitPage());
         });
     }
 

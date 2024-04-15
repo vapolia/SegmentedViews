@@ -84,7 +84,9 @@
         <!--     /> -->
 
         <Label Text="{Binding InfoText2}" />
-        
+
+        <Button Text="Open Delayed init test page" Command="{Binding GoTestDelayedInitPageCommand}" />
+
     </VerticalStackLayout>
     
 </ContentPage>

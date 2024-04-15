@@ -193,6 +193,8 @@ public class SegmentedView : View, ISegmentedView, IFontElement
       }
       else
         throw new NotSupportedException();
+
+      OnChildrenChanged();
     };
 
     void SegmentPropertyChanged(object? sender, PropertyChangedEventArgs e) 
@@ -267,25 +269,63 @@ public class SegmentedView : View, ISegmentedView, IFontElement
       case nameof(SelectedIndex):
         if (!disableNotifications)
         {
+          var prevDisableNotifications = disableNotifications;
           disableNotifications = true;
-          if (SelectedIndex >= 0 && SelectedIndex < Children.Count)
-            SelectedItem = Children[SelectedIndex].Item;
-          else
-            SelectedItem = null;
-          disableNotifications = false;
+          lastSelectedItem = null;
+          lastSelectedIndex = SelectedIndex;
+          SetTheSelectedIndex(SelectedIndex);
+          disableNotifications = prevDisableNotifications;
         }
         break;
 
       case nameof(SelectedItem):
         if (!disableNotifications)
         {
+          var prevDisableNotifications = disableNotifications;
           disableNotifications = true;
-          SelectedIndex = Children.Select(o => o.Item).ToList().IndexOf(SelectedItem);
-          disableNotifications = false;
+          lastSelectedItem = SelectedItem;
+          lastSelectedIndex = null;
+          SetTheSelectedItem(lastSelectedItem);
+          disableNotifications = prevDisableNotifications;
         }
         break;
     }
   }
+
+  #region Used to set the selected item again if SelectedItem or SelectedIndex is set before ItemsSource is set
+  private object? lastSelectedItem;
+  private int? lastSelectedIndex;
+
+  private void OnChildrenChanged()
+  {
+    if(lastSelectedItem == null && lastSelectedIndex == null)
+      return;
+      
+    if (!disableNotifications)
+    {
+      var prevDisableNotifications = disableNotifications;
+      disableNotifications = true;
+      if(lastSelectedIndex != null)
+        SetTheSelectedIndex(lastSelectedIndex.Value);
+      else
+        SetTheSelectedItem(lastSelectedItem);
+      disableNotifications = prevDisableNotifications;
+    }
+  }
+
+  void SetTheSelectedIndex(int index)
+  {
+    if (index >= 0 && index < Children.Count)
+      SelectedItem = Children[index].Item;
+    else
+      SelectedItem = null;
+  }
+
+  void SetTheSelectedItem(object? item)
+  {
+    SelectedIndex = Children.Select(o => o.Item).ToList().IndexOf(item);
+  }
+  #endregion
 
   protected override void OnBindingContextChanged()
   {
@@ -296,6 +336,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
 
   void ISegmentedView.SetSelectedIndex(int i)
   {
+    var prevDisableNotifications = disableNotifications;
     disableNotifications = true;
     
     SelectedIndex = i;
@@ -305,7 +346,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
     else
       SelectedItem = null;
     
-    disableNotifications = false;
+    disableNotifications = prevDisableNotifications;
     
     if(SelectionChangedCommand?.CanExecute(SelectionChangedCommandParameter) == true)
       SelectionChangedCommand.Execute(SelectionChangedCommandParameter);

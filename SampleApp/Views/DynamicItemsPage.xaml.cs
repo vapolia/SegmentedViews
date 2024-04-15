@@ -7,6 +7,6 @@ public partial class DynamicItemsPage : ContentPage
     public DynamicItemsPage()
     {
         InitializeComponent();
-        BindingContext = new DynamicItemsPageViewModel();
+        BindingContext = new DynamicItemsPageViewModel(Navigation);
     }
 }
