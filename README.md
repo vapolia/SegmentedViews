@@ -112,3 +112,10 @@ This width follow the format of a Grid's ColumnsDefinition, so it should be stra
 By default, the control requires a selected item. By setting `IsSelectionRequired` to `False`, it won't try to constraint the SelectedIndex between 0 and the number of segments. The visual result is no segment is selected.
 
 TLDR: set `IsSelectionRequired="False"` and `SelectedIndex="-1"` to visually see no selection.
+
+# Highlight color on Android
+
+This is standard Material design on the native Android platform. Check the native doc for more info.
+
+For quick ref:  
+![image](https://github.com/vapolia/SegmentedViews/assets/190756/0c20a415-4a77-48f7-994e-9691d1a12c70)
