@@ -20,7 +20,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.20" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -57,6 +57,7 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/vapolia/SegmentedViews</PackageProjectUrl>
 		<PackageReleaseNotes>
+			1.0.4: Upgrade nugets.
 			1.0.3: add net8.0 target for unit tests
 			1.0.1: Upgrade nugets. Remove dependency on maui compatibility.
 			1.0.0: Initial release
