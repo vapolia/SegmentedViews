@@ -57,6 +57,7 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/vapolia/SegmentedViews</PackageProjectUrl>
 		<PackageReleaseNotes>
+			1.0.6: upgrade nugets.
 			1.0.5: Upgrade nugets.
 			1.0.3: add net8.0 target for unit tests
 			1.0.1: Upgrade nugets. Remove dependency on maui compatibility.
