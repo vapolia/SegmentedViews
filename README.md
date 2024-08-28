@@ -18,8 +18,8 @@ builder.UseSegmentedView();
 
 
 Platforms:
-- Android
-- iOS
+- Android API 27+
+- iOS 13+
 
 Supports both static segments and `ItemsSource` to build segments dynamically.
 
@@ -119,3 +119,13 @@ This is standard Material design on the native Android platform. Check the nativ
 
 For quick ref:  
 ![image](https://github.com/vapolia/SegmentedViews/assets/190756/0c20a415-4a77-48f7-994e-9691d1a12c70)
+
+# FAQ
+
+## Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment"
+
+Make sure your SupportedOSPlatformVersion is at least those:
+```xml
+<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">13.0</SupportedOSPlatformVersion>
+<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">27.0</SupportedOSPlatformVersion>
+```
