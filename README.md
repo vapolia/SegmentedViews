@@ -122,10 +122,16 @@ For quick ref:
 
 # FAQ
 
-## Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment"
+## (1) Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment"
 
 Make sure your SupportedOSPlatformVersion is at least those:
 ```xml
 <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">13.0</SupportedOSPlatformVersion>
 <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">27.0</SupportedOSPlatformVersion>
 ```
+
+## (2) Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment"
+
+replace `xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"`  
+by
+`xmlns:segmented="clr-namespace:Vapolia.SegmentedViews;assembly=Vapolia.SegmentedViews"`
