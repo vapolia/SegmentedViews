@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Vapolia.SegmentedViews;
@@ -9,14 +10,15 @@ internal static class SegmentExtensions
         if (segment.Item == null)
             return string.Empty;
 
-        var obj = segmentedControl.TextPropertyName != null ? segment.Item.GetType().GetProperty(segmentedControl.TextPropertyName)?.GetValue(segment.Item) : segment.Item;
+        //var obj = segmentedControl.TextPropertyName != null ? segment.Item.GetType().GetProperty(segmentedControl.TextPropertyName)?.GetValue(segment.Item) : segment.Item;
+        var obj = segment.Item;
 
         if (segmentedControl.TextConverter != null)
             obj = segmentedControl.TextConverter.Convert(obj, typeof(string), null, CultureInfo.CurrentCulture);
 
         return obj?.ToString() ?? string.Empty;
     }
-    
+
     public static List<GridLength> GetWidths(this ISegmentedView segmentedView)
     {
         return segmentedView.Children.Select((segment,i) =>

@@ -24,10 +24,10 @@ public class Segment : BindableObject
   {
     if (value is INotifyPropertyChanged notifyPropertyChanged1)
       notifyPropertyChanged1.PropertyChanged -= OnItemPropertyChanged;
-    
+  
     if (newValue is INotifyPropertyChanged notifyPropertyChanged2)
       notifyPropertyChanged2.PropertyChanged += OnItemPropertyChanged;
-
+  
     //Simulate the change of the whole item when an item's property has changed
     void OnItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

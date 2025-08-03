@@ -8,6 +8,7 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+        <IsTrimmable>true</IsTrimmable>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
@@ -60,6 +61,7 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/vapolia/SegmentedViews</PackageProjectUrl>
 		<PackageReleaseNotes>
+            1.0.9: remove TextPropertyName as it uses reflection. Mark library as Trimmable.
             1.0.8: fix typo in Segment which prevented the Width property to work for Segments.
             1.0.7: net9.0 and Windows
 			1.0.6: upgrade nugets.

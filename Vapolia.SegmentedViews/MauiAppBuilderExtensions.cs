@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 [assembly: XmlnsDefinition("https://vapolia.eu/Vapolia.SegmentedViews", "Vapolia.SegmentedViews", AssemblyName = "Vapolia.SegmentedViews")]
 [assembly: Microsoft.Maui.Controls.XmlnsPrefix("https://vapolia.eu/Vapolia.SegmentedViews", "segmented")]
@@ -10,15 +9,6 @@ namespace Vapolia.SegmentedViews;
 [SuppressMessage("Usage", "CA2255: ’ModuleInitializer’ warning")]
 public static class MauiAppBuilderExtensions
 {
-    //Force load the assembly for the XAML compiler, to fix:
-    // Error XC0000 : Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment".
-    [ModuleInitializer]
-    internal static void LoadAssembly()
-    {
-        _ = new Segment();
-    }
-
-    
     /// <summary>
     /// Add Maui handlers for this control
     /// </summary>

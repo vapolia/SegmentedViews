@@ -16,7 +16,7 @@ public interface ISegmentedView : IView, ITextStyle
     internal void SetSelectedIndex(int i);
     public bool IsSelectionRequired { get; }
     
-    internal string? TextPropertyName { get; }
+    //internal string? TextPropertyName { get; }
     internal IValueConverter? TextConverter { get; }
     internal  ObservableCollection<Segment> Children { get; }
     internal WidthDefinitionCollection? WidthDefinitions { get; }

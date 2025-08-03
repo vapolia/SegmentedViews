@@ -17,7 +17,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   #region Bindable Definitions
 
   public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(SegmentedView), propertyChanged: (bindable, value, newValue) => ((SegmentedView)bindable).OnItemsSourceChanged((IEnumerable?)value, (IEnumerable?)newValue));
-  public static readonly BindableProperty TextPropertyNameProperty = BindableProperty.Create(nameof(TextPropertyName), typeof(string), typeof(SegmentedView));
+  //public static readonly BindableProperty TextPropertyNameProperty = BindableProperty.Create(nameof(TextPropertyName), typeof(string), typeof(SegmentedView));
   public static readonly BindableProperty TextConverterProperty = BindableProperty.Create(nameof(TextConverter), typeof(IValueConverter), typeof(SegmentedView));
   public static readonly BindableProperty SelectedBackgroundColorProperty = BindableProperty.Create(nameof(SelectedBackgroundColor), typeof(Color), typeof(SegmentedView), Colors.Blue);
   public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(SegmentedView), Colors.Black);
@@ -28,7 +28,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
 
   #region Font
 
-  public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(IFontElement), default(string), propertyChanged: OnFontFamilyChanged);
+  public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(IFontElement), propertyChanged: OnFontFamilyChanged);
   public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize), typeof(double), typeof(IFontElement), 0d, propertyChanged: OnFontSizeChanged, defaultValueCreator: FontSizeDefaultValueCreator);
   public static readonly BindableProperty FontAttributesProperty = BindableProperty.Create(nameof(FontAttributes), typeof(FontAttributes), typeof(IFontElement), FontAttributes.None, propertyChanged: OnFontAttributesChanged);
   public static readonly BindableProperty FontAutoScalingEnabledProperty = BindableProperty.Create(nameof(FontAutoScalingEnabled), typeof(bool), typeof(IFontElement), true, propertyChanged: OnFontAutoScalingEnabledChanged);
@@ -61,7 +61,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
 
   //if (DesignMode.IsDesignModeEnabled)
   [EditorBrowsable(EditorBrowsableState.Never)]
-  public ObservableCollection<Segment> Children { get; } = new();
+  public ObservableCollection<Segment> Children { get; } = [];
 
   #region Bindables Properties
 
@@ -72,7 +72,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
   /// </summary>
   public IEnumerable? ItemsSource { get => (IEnumerable?)GetValue(ItemsSourceProperty); set => SetValue(ItemsSourceProperty, value); }
 
-  public string? TextPropertyName { get => (string?)GetValue(TextPropertyNameProperty); set => SetValue(TextPropertyNameProperty, value); }
+  //public string? TextPropertyName { get => (string?)GetValue(TextPropertyNameProperty); set => SetValue(TextPropertyNameProperty, value); }
   public IValueConverter? TextConverter { get => (IValueConverter?)GetValue(TextConverterProperty); set => SetValue(TextConverterProperty, value); }
 
   /// <summary>
