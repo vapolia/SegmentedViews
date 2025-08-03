@@ -26,6 +26,11 @@
 		<None Include="..\\README.md" Pack="true" PackagePath="" />
 		<None Include="..\\icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
+
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <CopyDebugSymbolFilesFromPackages>true</CopyDebugSymbolFilesFromPackages>
+    </PropertyGroup>
 	
 	<!--  nuget configurable properties -->
 	<PropertyGroup>
