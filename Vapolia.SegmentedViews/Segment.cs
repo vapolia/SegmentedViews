@@ -5,7 +5,7 @@ namespace Vapolia.SegmentedViews;
 public class Segment : BindableObject
 {
   public static readonly BindableProperty ItemProperty = BindableProperty.Create(nameof (Item), typeof (object), typeof (Segment), propertyChanged: (bindable, value, newValue) => ((Segment)bindable).OnItemChanged(value, newValue));
-  public static readonly BindableProperty WidthProperty = BindableProperty.Create(nameof (Item), typeof (GridLength?), typeof (Segment));
+  public static readonly BindableProperty WidthProperty = BindableProperty.Create(nameof (Width), typeof (GridLength?), typeof (Segment));
 
   public object? Item
   {

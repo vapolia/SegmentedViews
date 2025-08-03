@@ -55,6 +55,7 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/vapolia/SegmentedViews</PackageProjectUrl>
 		<PackageReleaseNotes>
+            1.0.8: fix typo in Segment which prevented the Width property to work for Segments.
             1.0.7: net9.0 and Windows
 			1.0.6: upgrade nugets.
 			1.0.5: Upgrade nugets.
