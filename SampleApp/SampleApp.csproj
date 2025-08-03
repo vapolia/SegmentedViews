@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0-android;net8.0-ios</TargetFrameworks>
+        <TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
+        
         <OutputType>Exe</OutputType>
 
         <!-- .NET MAUI -->
         <UseMaui>true</UseMaui>
-        <MauiVersion>8.0.20</MauiVersion>
+        <MauiVersion>9.0.90</MauiVersion>
         <SingleProject>true</SingleProject>
 
         <!-- Project Options -->
@@ -27,7 +29,10 @@
 
         <!-- Target Platform Options -->
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">27.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -45,12 +50,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.*" Condition="'$(Configuration)' == 'Debug'" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.7" Condition="'$(Configuration)' == 'Debug'" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Vapolia.SegmentedViews\Vapolia.SegmentedViews.csproj" />
 <!--        <PackageReference Include="Vapolia.SegmentedViews" Version="1.0.3" />-->
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Platforms\MacCatalyst\AppDelegate.cs" />
+      <None Include="Platforms\MacCatalyst\Program.cs" />
+      <None Include="Platforms\Windows\App.xaml" />
     </ItemGroup>
 </Project>

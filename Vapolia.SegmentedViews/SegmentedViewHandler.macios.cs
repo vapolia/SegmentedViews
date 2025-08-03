@@ -5,8 +5,9 @@ using Microsoft.Maui.Platform;
 using ObjCRuntime;
 using UIKit;
 
-namespace Vapolia.SegmentedViews.Platforms.Ios;
+namespace Vapolia.SegmentedViews;
 
+// ReSharper disable once InconsistentNaming
 internal class UISegmentedControlEx : UISegmentedControl
 {
     private Thickness? paddingSize;
@@ -38,8 +39,8 @@ internal class UISegmentedControlEx : UISegmentedControl
         
         if (Padding is { IsEmpty: false } padding)
         {
-            //On iOS there is a default minimum padding of 10.
-            //To match Android, lets subtracts 10.
+            //On iOS the default minimum padding is 10.
+            //To match Android, let's subtract 10.
             var width = padding.HorizontalThickness - 10;
             
             size.Width += (nfloat)(2 * width * (NumberOfSegments + 1));
@@ -82,7 +83,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, UISegmentedCon
     {
     }
 
-    public SegmentedViewHandler(IPropertyMapper mapper) : base(mapper ?? Mapper)
+    public SegmentedViewHandler(IPropertyMapper? mapper) : base(mapper ?? Mapper)
     {
     }
 

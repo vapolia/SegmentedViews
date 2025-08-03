@@ -1,11 +1,4 @@
-#if ANDROID
-using Vapolia.SegmentedViews.Platforms.Android;
-#endif
-#if IOS
-using Vapolia.SegmentedViews.Platforms.Ios;
-#endif
-
-[assembly: Microsoft.Maui.Controls.XmlnsDefinition("https://vapolia.eu/Vapolia.SegmentedViews", "Vapolia.SegmentedViews")]
+[assembly: XmlnsDefinition("https://vapolia.eu/Vapolia.SegmentedViews", "Vapolia.SegmentedViews")]
 [assembly: Microsoft.Maui.Controls.XmlnsPrefix("https://vapolia.eu/Vapolia.SegmentedViews", "segmented")]
 [assembly: Microsoft.Maui.Controls.XmlnsPrefix("clr-namespace:Vapolia.SegmentedViews;assembly=Vapolia.SegmentedViews", "segmented")]
 
@@ -26,8 +19,8 @@ public static class MauiAppBuilderExtensions
             handlers.TryAddHandler<SegmentedView, SegmentedViewHandler>();
 #elif IOS || MACCATALYST
             handlers.TryAddHandler<SegmentedView, SegmentedViewHandler>();
-// #elif WINDOWS
-//            handlers.TryAddHandler<SegmentedControl, SegmentedControlHandler>();
+#elif WINDOWS
+            handlers.TryAddHandler<SegmentedView, SegmentedViewHandler>();
 #endif
         });
 

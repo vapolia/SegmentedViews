@@ -6,13 +6,13 @@ using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using Orientation = Android.Widget.Orientation;
 
-namespace Vapolia.SegmentedViews.Platforms.Android;
+namespace Vapolia.SegmentedViews;
 
 internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButtonToggleGroup>
 {
     MaterialButton? selectedButton;
     bool disableButtonNotifications;
-    ColorStateList? BorderColor;
+    ColorStateList? borderColor;
 
     public static IPropertyMapper<ISegmentedView, SegmentedViewHandler> Mapper = new PropertyMapper<ISegmentedView, SegmentedViewHandler>(ViewMapper)
     {
@@ -40,7 +40,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     {
     }
 
-    public SegmentedViewHandler(IPropertyMapper mapper) : base(mapper ?? Mapper)
+    public SegmentedViewHandler(IPropertyMapper? mapper) : base(mapper ?? Mapper)
     {
     }
 
@@ -179,7 +179,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
             control.BackgroundColor.ToPlatform(),
         ]);
 
-        button.StrokeColor = handler.BorderColor;
+        button.StrokeColor = handler.borderColor;
         button.Enabled = control.IsEnabled;
         
         UpdateFont(button, handler, control);
@@ -252,7 +252,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
     
     static void MapBorderColor(SegmentedViewHandler handler, ISegmentedView virtualView)
     {
-        handler.BorderColor = new (
+        handler.borderColor = new (
             [
                 [-global::Android.Resource.Attribute.StateEnabled],
                 [],
@@ -262,7 +262,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, MaterialButton
                 virtualView.BorderColor.ToPlatform(),
             ]);
         
-        DoForAllChildren(handler, v => v.StrokeColor = handler.BorderColor);
+        DoForAllChildren(handler, v => v.StrokeColor = handler.borderColor);
     }
 
     // static void MapBorderWidth(SegmentedControlHandler handler, ISegmentedControl control)

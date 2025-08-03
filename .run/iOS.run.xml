@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="iOS" type="XamarinIOSProject" factoryName="Xamarin.iOS">
+    <option name="PROJECT_PATH" value="$PROJECT_DIR$/SampleApp/SampleApp.csproj" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="IS_PASS_PARENT_ENVS" value="false" />
+    <option name="EXTRA_MLAUNCH_PARAMETERS" value="" />
+    <option name="PLATFORM_TYPE" value="IOS" />
+    <method v="2" />
+  </configuration>
+</component>

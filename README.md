@@ -19,7 +19,9 @@ builder.UseSegmentedView();
 
 Platforms:
 - Android API 27+
-- iOS 13+
+- iOS 15+
+- MacOS 14.0+
+- Windows 10.0.19041.0+
 
 Supports both static segments and `ItemsSource` to build segments dynamically.
 
@@ -135,3 +137,7 @@ Make sure your SupportedOSPlatformVersion is at least those:
 replace `xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"`  
 by
 `xmlns:segmented="clr-namespace:Vapolia.SegmentedViews;assembly=Vapolia.SegmentedViews"`
+
+## Windows
+
+On windows, this control uses `CommunityToolkit.WinUI.Controls.Segmented`
