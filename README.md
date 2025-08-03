@@ -135,6 +135,13 @@ Make sure your SupportedOSPlatformVersion is at least these:
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
 ```
 
+## (2) Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment"
+
+replace `xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"`  
+by
+`xmlns:segmented="clr-namespace:Vapolia.SegmentedViews;assembly=Vapolia.SegmentedViews"`
+
+
 ## Windows
 
 On windows, this control uses `CommunityToolkit.WinUI.Controls.Segmented`
