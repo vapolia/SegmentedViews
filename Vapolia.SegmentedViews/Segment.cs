@@ -23,16 +23,24 @@ public class Segment : BindableObject
   private void OnItemChanged(object value, object newValue)
   {
     if (value is INotifyPropertyChanged notifyPropertyChanged1)
-      notifyPropertyChanged1.PropertyChanged -= OnItemPropertyChanged;
-  
+      WeakEventManager.Unsubscribe(notifyPropertyChanged1, this, OnItemPropertyChanged);
+
     if (newValue is INotifyPropertyChanged notifyPropertyChanged2)
-      notifyPropertyChanged2.PropertyChanged += OnItemPropertyChanged;
-  
-    //Simulate the change of the whole item when an item's property has changed
-    void OnItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-      if(e.PropertyName != nameof(Item))
-        OnPropertyChanged(nameof(Item));
-    }
+      WeakEventManager.Subscribe(notifyPropertyChanged2, this, OnItemPropertyChanged);
+  }
+
+  //Simulate the change of the whole item when an item's property has changed
+  private void OnItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
+  {
+    if(e.PropertyName != nameof(Item))
+      OnPropertyChanged(nameof(Item));
+  }
+
+  /// <summary>
+  /// Finalizer to ensure weak event cleanup
+  /// </summary>
+  ~Segment()
+  {
+    WeakEventManager.UnsubscribeAll(this);
   }
 }

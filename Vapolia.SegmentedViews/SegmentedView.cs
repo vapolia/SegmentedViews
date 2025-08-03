@@ -196,7 +196,7 @@ public class SegmentedView : View, ISegmentedView, IFontElement
       if (args.Action is NotifyCollectionChangedAction.Add)
       {
         foreach (Segment segment in args.NewItems!)
-          segment.PropertyChanged += SegmentPropertyChanged;
+          WeakEventManager.Subscribe(segment, this, SegmentPropertyChanged);
         Handler?.UpdateValue(nameof(ISegmentedView.Children));
       }
       else if (args.Action is NotifyCollectionChangedAction.Remove)
@@ -204,14 +204,15 @@ public class SegmentedView : View, ISegmentedView, IFontElement
         if (args.OldItems != null)
         {
           foreach (Segment segment in args.OldItems)
-            segment.PropertyChanged -= SegmentPropertyChanged;
+            WeakEventManager.Unsubscribe(segment, this, SegmentPropertyChanged);
           Handler?.UpdateValue(nameof(ISegmentedView.Children));
         }
       }
       else if (args.Action is NotifyCollectionChangedAction.Reset)
       {
-        // foreach (var segment in Children)
-        //   segment.PropertyChanged -= SegmentPropertyChanged;
+        // Unsubscribe from all segments when collection is reset
+        foreach (var segment in Children)
+          WeakEventManager.Unsubscribe(segment, this, SegmentPropertyChanged);
         Handler?.UpdateValue(nameof(ISegmentedView.Children));
       }
       else
@@ -219,17 +220,18 @@ public class SegmentedView : View, ISegmentedView, IFontElement
 
       OnChildrenChanged();
     };
-
-    void SegmentPropertyChanged(object? sender, PropertyChangedEventArgs e)
-      => Handler?.UpdateValue(nameof(ISegmentedView.Children));
   }
+
+  private void SegmentPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    => Handler?.UpdateValue(nameof(ISegmentedView.Children));
 
   protected override void OnHandlerChanged()
   {
     base.OnHandlerChanged();
     if (Handler == null)
     {
-      //Unsubscribe
+      //Unsubscribe from all weak events
+      WeakEventManager.UnsubscribeAll(this);
       OnItemsSourceChanged(ItemsSource, null);
     }
   }
