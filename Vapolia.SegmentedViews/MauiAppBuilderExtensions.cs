@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-[assembly: XmlnsDefinition("https://vapolia.eu/Vapolia.SegmentedViews", "Vapolia.SegmentedViews")]
+[assembly: XmlnsDefinition("https://vapolia.eu/Vapolia.SegmentedViews", "Vapolia.SegmentedViews", AssemblyName = "Vapolia.SegmentedViews")]
 [assembly: Microsoft.Maui.Controls.XmlnsPrefix("https://vapolia.eu/Vapolia.SegmentedViews", "segmented")]
 [assembly: Microsoft.Maui.Controls.XmlnsPrefix("clr-namespace:Vapolia.SegmentedViews;assembly=Vapolia.SegmentedViews", "segmented")]
 
@@ -15,8 +15,7 @@ public static class MauiAppBuilderExtensions
     [ModuleInitializer]
     internal static void LoadAssembly()
     {
-        _ = typeof(Segment);
-        _ = typeof(SegmentedView);
+        _ = new Segment();
     }
 
     
