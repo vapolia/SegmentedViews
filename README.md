@@ -141,6 +141,8 @@ replace `xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"`
 by
 `xmlns:segmented="clr-namespace:Vapolia.SegmentedViews;assembly=Vapolia.SegmentedViews"`
 
+This looks like a bug in the xamlc compiler.
+
 
 ## Windows
 
