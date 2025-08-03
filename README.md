@@ -124,19 +124,16 @@ For quick ref:
 
 # FAQ
 
-## (1) Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment"
+## Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment"
 
-Make sure your SupportedOSPlatformVersion is at least those:
+Make sure your SupportedOSPlatformVersion is at least these:
 ```xml
-<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">13.0</SupportedOSPlatformVersion>
-<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">27.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
 ```
-
-## (2) Cannot resolve type "https://vapolia.eu/Vapolia.SegmentedViews:segmented:Segment"
-
-replace `xmlns:segmented="https://vapolia.eu/Vapolia.SegmentedViews"`  
-by
-`xmlns:segmented="clr-namespace:Vapolia.SegmentedViews;assembly=Vapolia.SegmentedViews"`
 
 ## Windows
 
