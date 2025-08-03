@@ -13,6 +13,8 @@ public static class MauiAppBuilderExtensions
     /// <returns></returns>
     public static MauiAppBuilder UseSegmentedView(this MauiAppBuilder builder)
     {
+        _ = new Segment();
+
         builder.ConfigureMauiHandlers(handlers =>
         {
 #if ANDROID
