@@ -10,6 +10,7 @@ namespace Vapolia.SegmentedViews;
 internal class SegmentedViewHandler : ViewHandler<ISegmentedView, Segmented>
 {
     private IFontManager? fontManager;
+    private bool disableOnSelectionChanged;
     
     public static IPropertyMapper<ISegmentedView, SegmentedViewHandler> Mapper = new PropertyMapper<ISegmentedView, SegmentedViewHandler>(ViewMapper)
     {
@@ -68,13 +69,17 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, Segmented>
 
     private void PlatformView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var i = PlatformView.SelectedIndex;
-        if (VirtualView.SelectedIndex != i)
-            VirtualView.SetSelectedIndex(i);
+        if (!disableOnSelectionChanged)
+        {
+            var i = PlatformView.SelectedIndex;
+            if (VirtualView.SelectedIndex != i)
+                VirtualView.SetSelectedIndex(i);
+        }
     }
 
     static void MapChildren(SegmentedViewHandler handler, ISegmentedView virtualView)
     {
+        handler.disableOnSelectionChanged = true;
         var segmentControl = handler.PlatformView;
         segmentControl.Items.Clear();
 
@@ -130,6 +135,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, Segmented>
         }
         
         MapSelectedIndex(handler, virtualView);
+        handler.disableOnSelectionChanged = false;
     }
 
     static void MapTintColor(SegmentedViewHandler handler, ISegmentedView control)
@@ -211,7 +217,7 @@ internal class SegmentedViewHandler : ViewHandler<ISegmentedView, Segmented>
     {
         if (control.IsSelectionRequired)
         {
-            if(handler.PlatformView.SelectedIndex < 0 && handler.PlatformView.Items.Count > 0)
+            if (handler.PlatformView.SelectedIndex < 0 && handler.PlatformView.Items.Count > 0)
                 handler.PlatformView.SelectedIndex = 0;
         }
     }

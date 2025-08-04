@@ -35,15 +35,15 @@
         <segmented:SegmentedView
             x:Name="TheSegmentView"
             ItemsSource="{Binding Persons}"
-            TextPropertyName="LastName"
+            TextConverter="{StaticResource PersonTextConverter}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
-            SelectedItem="{Binding SegmentSelectedItem}"
             Style="{StaticResource SegmentedViewMaterial2}"
+            SelectedItem="{Binding SegmentSelectedItem}"
+            SelectedIndex="{Binding SegmentSelectedIndex, Mode=OneWayToSource}" 
             HorizontalOptions="Fill" IsEnabled="True" 
             ItemPadding="10,3" 
             WidthDefinitions="Auto,*,*"
             />
-
         
         <HorizontalStackLayout Spacing="5">
             <Label Text="Selected Segment : #" VerticalOptions="Center" />

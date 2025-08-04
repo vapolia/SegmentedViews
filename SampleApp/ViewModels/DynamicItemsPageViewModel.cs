@@ -31,6 +31,7 @@ public class DynamicItemsPageViewModel : INotifyPropertyChanged
     private string infoText2 = string.Empty;
     private object? segmentSelectedItem;
     private int nextInt = 42;
+    private int selectedIndexChangedCallCount = 0;
 
     public object? SegmentSelectedItem
     {
@@ -56,6 +57,20 @@ public class DynamicItemsPageViewModel : INotifyPropertyChanged
     public ICommand ClearCommand { get; }
     public ICommand GoTestDelayedInitPageCommand { get; }
     public ObservableCollection<Person> Persons { get; }
+
+    public int SegmentSelectedIndex
+    {
+        get
+        {
+            //Not used
+            throw new NotSupportedException();
+        }
+        set
+        {
+            //Only for info
+            InfoText2 = $"Selected index #{++selectedIndexChangedCallCount}: {value}";
+        }
+    }
 
     public DynamicItemsPageViewModel(INavigation navigation)
     {

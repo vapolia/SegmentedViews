@@ -6,7 +6,10 @@
              x:DataType="viewModels:TestDelayedInitViewModel"
              Title="Delayed Init Test"
              BackgroundColor="White">
-    
+        
+    <ContentPage.Resources>
+        <viewModels:PersonTextConverter x:Key="PersonTextConverter" />
+    </ContentPage.Resources>
     
     <VerticalStackLayout HorizontalOptions="Fill" Spacing="10" Padding="10,15">
         <View.Resources>
@@ -23,7 +26,7 @@
         <segmented:SegmentedView
             x:Name="TheSegmentView"
             ItemsSource="{Binding Persons}"
-            TextPropertyName="LastName"
+            TextConverter="{x:StaticResource PersonTextConverter}"
             SelectionChangedCommand="{Binding SegmentSelectionChangedCommand}"
             SelectedItem="{Binding SegmentSelectedItem}"
             Style="{StaticResource SegmentedViewMaterial2}"

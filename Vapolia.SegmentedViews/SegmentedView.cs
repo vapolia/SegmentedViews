@@ -365,6 +365,9 @@ public class SegmentedView : View, ISegmentedView, IFontElement
 
   void ISegmentedView.SetSelectedIndex(int i)
   {
+    if(i == SelectedIndex)
+      return;
+    
     var prevDisableNotifications = disableNotifications;
     disableNotifications = true;
 
